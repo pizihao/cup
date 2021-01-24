@@ -1,4 +1,4 @@
-package com.qlu.cup.type;
+package com.qlu.cup.jdbc;
 
 /**
  * @program: cup
