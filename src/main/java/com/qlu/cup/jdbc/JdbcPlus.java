@@ -35,7 +35,6 @@ public class JdbcPlus {
 
     private JdbcTemplate jdbcTemplate;
 
-
     /**
      * 根据条件查询
      *

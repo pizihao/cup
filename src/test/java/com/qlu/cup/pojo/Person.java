@@ -1,4 +1,4 @@
-package pojo;
+package com.qlu.cup.pojo;
 
 import java.io.Serializable;
 

@@ -1,0 +1,12 @@
+mapper:
+  namespace: com.qlu.cup.UsersMapper
+  insert:
+    id: addUser
+    parameterType: com.qlu.cup.Person
+    sql: insert into person(name, age) values ({name}, {age})
+  select:
+    id: getUserById
+    resultType: com.qlu.cup.Person
+    sql: select * from person where id = {id}
+
+
