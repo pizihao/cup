@@ -94,7 +94,7 @@ public class YmlMapperBuilder {
             if (objectMap.containsKey(PartsUtil.SQL)) {
                 node.setSql(objectMap.get(PartsUtil.SQL).toString());
             }
-            nodeMap.put(entry.getKey(), node.build());
+            nodeMap.put(namespace + "." + entry.getKey(), node.build());
         }
     }
 }

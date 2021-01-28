@@ -1,5 +1,6 @@
 package com.qlu.cup.context;
 
+import com.qlu.cup.bind.BindException;
 import com.qlu.cup.builder.yml.YNode;
 import com.qlu.cup.transaction.TransactionFactory;
 import com.qlu.cup.util.PartsUtil;
@@ -45,7 +46,11 @@ public final class Environment {
     this.yNodeMap = yNodeMap;
   }
 
-  //建造模式
+    public boolean hasNode(Class<?> forName, String statementName) {
+      return yNodeMap.containsKey(forName) && yNodeMap.get(forName).getNode().containsKey(statementName);
+    }
+
+    //建造模式
   public static class Builder {
       private String id;
       private TransactionFactory transactionFactory;

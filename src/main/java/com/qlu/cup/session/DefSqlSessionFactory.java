@@ -4,6 +4,7 @@ import com.qlu.cup.bind.Configuration;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.context.ErrorContext;
 import com.qlu.cup.exception.ExceptionFactory;
+import com.qlu.cup.executor.Executor;
 import com.qlu.cup.transaction.DefJdbcTransactionFactory;
 import com.qlu.cup.transaction.Transaction;
 import com.qlu.cup.transaction.TransactionFactory;
@@ -52,10 +53,11 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
     private SqlSession getSessionFromDataSource(TransactionIsolationLevel level, boolean autoCommit) {
         Transaction tx = null;
         try {
-            //通过事务工厂来产生一个事务
-            //生成一个执行器(事务包含在执行器里)
-            //然后产生一个DefaultSqlSession
-            return null;
+            final Environment environment = configuration.getEnvironment();
+            final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+            tx = transactionFactory.newTransaction(environment.getDataSource(), level, autoCommit);
+            final Executor executor = configuration.newExecutor(tx);
+            return new DefSqlSession(configuration, executor, autoCommit);
         } catch (Exception e) {
             //如果打开事务出错，则关闭它
             closeTransaction(tx);
@@ -68,12 +70,17 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
 
     private SqlSession getSessionFromConnection(Connection connection) {
         try {
-            boolean autoCommit = true;
-            //强制性的自动提交
-            //通过事务工厂来产生一个事务 根据Connection创建Transaction
-            //生成一个执行器(事务包含在执行器里)
-            //然后产生一个DefaultSqlSession
-            return null;
+            boolean autoCommit;
+            try {
+                autoCommit = connection.getAutoCommit();
+            } catch (SQLException e) {
+                autoCommit = true;
+            }
+            final Environment environment = configuration.getEnvironment();
+            final TransactionFactory transactionFactory = getTransactionFactoryFromEnvironment(environment);
+            final Transaction tx = transactionFactory.newTransaction(connection);
+            final Executor executor = configuration.newExecutor(tx);
+            return new DefSqlSession(configuration, executor, autoCommit);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
         } finally {

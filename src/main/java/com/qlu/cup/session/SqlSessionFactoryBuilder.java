@@ -79,11 +79,9 @@ public class SqlSessionFactoryBuilder {
                     .dataSource(dataSource)
                     .mapperPath(mapperPath)
                     .yNodeMap(mapper);
-            Environment build = environmentBuilder.build();
-
+            Environment environment = environmentBuilder.build();
             //创建Configuration
-
-            return null;
+            return new Configuration(environment);
         } catch (Exception e) {
             e.printStackTrace();
         }

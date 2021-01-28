@@ -147,4 +147,19 @@ public class YNode {
         }
     }
 
+    @Override
+    public String toString() {
+        System.out.println("=============================");
+        System.out.println("name = "+ name);
+        System.out.println("node = "+ node);
+        System.out.println("value = "+ value);
+        System.out.println("namespace = "+ namespace);
+        System.out.println("rootName = "+ rootName);
+        System.out.println("id = "+ id);
+        System.out.println("sql = "+ sql);
+        System.out.println("resultType = "+ resultType);
+        System.out.println("parameterType = "+ parameterType);
+        System.out.println("=============================");
+        return "OK";
+    }
 }
