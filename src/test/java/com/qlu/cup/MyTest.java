@@ -1,7 +1,9 @@
 package com.qlu.cup;
 
+import com.qlu.cup.bind.Configuration;
 import com.qlu.cup.cutil.CupUtil;
 import com.qlu.cup.cutil.DbUtil;
+import com.qlu.cup.mapper.UsersMapper;
 import com.qlu.cup.session.DefSqlSessionFactory;
 import com.qlu.cup.session.SqlSession;
 import org.junit.Test;
@@ -27,6 +29,7 @@ public class MyTest {
     public void mapperTest(){
         CupUtil cupUtil = new CupUtil();
         SqlSession sqlSession = cupUtil.getSqlSession();
+        UsersMapper mapper = sqlSession.getMapper(UsersMapper.class);
     }
 
 }

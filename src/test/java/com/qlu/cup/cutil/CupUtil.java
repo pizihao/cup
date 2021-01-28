@@ -28,39 +28,12 @@ import com.qlu.cup.session.SqlSessionFactoryBuilder;
  **/
 public class CupUtil {
     private static DataSource datasource;
-    private static Environment environment;
     private static SqlSessionFactory sqlSessionFactory;
 
     static {
         try {
             InputStream inputStream = Resources.getResourceAsStream("cup-conf.yml");
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
-//            InputStream inputStream = Resources.getResourceAsStream("mapper/UserMapper.yml");
-//            Map<Class<?>, YNode> builder = new YmlMapperBuilder().builder(inputStream);
-//            builder.forEach((aClass, yNode) -> {
-//                System.out.println(yNode.getId());
-//                System.out.println(yNode.getName());
-//                System.out.println(yNode.getNamespace());
-//                System.out.println(yNode.getParameterType());
-//                System.out.println(yNode.getResultType());
-//                System.out.println(yNode.getRootName());
-//                System.out.println(yNode.getSql());
-//                System.out.println(yNode.getValue());
-//                System.out.println("+++++++++++++++");
-//                yNode.getNode().forEach((s, yNode1) -> {
-//                    System.out.println("=====================");
-//                    System.out.println(s);
-//                    System.out.println(yNode1.getId());
-//                    System.out.println(yNode1.getName());
-//                    System.out.println(yNode1.getNamespace());
-//                    System.out.println(yNode1.getParameterType());
-//                    System.out.println(yNode1.getResultType());
-//                    System.out.println(yNode1.getRootName());
-//                    System.out.println(yNode1.getSql());
-//                    System.out.println(yNode1.getValue());
-//                    System.out.println("=====================");
-//                });
-//            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -71,7 +44,7 @@ public class CupUtil {
     }
 
     public Environment getEnvironment() {
-        return environment;
+        return sqlSessionFactory.getConfiguration().getEnvironment();
     }
 
     /**
