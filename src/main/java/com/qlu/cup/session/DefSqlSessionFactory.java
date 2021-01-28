@@ -1,9 +1,9 @@
 package com.qlu.cup.session;
 
+import com.qlu.cup.bind.Configuration;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.context.ErrorContext;
 import com.qlu.cup.exception.ExceptionFactory;
-import com.qlu.cup.executor.Executor;
 import com.qlu.cup.transaction.DefJdbcTransactionFactory;
 import com.qlu.cup.transaction.Transaction;
 import com.qlu.cup.transaction.TransactionFactory;
@@ -11,7 +11,6 @@ import com.qlu.cup.transaction.TransactionIsolationLevel;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
  * @program: cup
@@ -21,28 +20,30 @@ import java.util.Properties;
  **/
 public class DefSqlSessionFactory implements SqlSessionFactory {
 
-    private final Properties properties;
+    private final Configuration configuration;
 
-    public DefSqlSessionFactory(Properties properties){
-        this.properties = properties;
+    public DefSqlSessionFactory(Configuration configuration){
+        this.configuration = configuration;
+    }
+
+    @Override
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
     @Override
     public SqlSession getSession() {
         return getSessionFromDataSource(null, false);
     }
-
     @Override
     public SqlSession getSession(boolean autoCommit) {
         return getSessionFromDataSource(null, autoCommit);
     }
-
     @Override
     public SqlSession getSession(TransactionIsolationLevel level) {
         return getSessionFromDataSource(level, false);
     }
 
-    //以下2个方法都会调用openSessionFromConnection
     @Override
     public SqlSession getSession(Connection connection) {
         return getSessionFromConnection(connection);
@@ -57,7 +58,7 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
             return null;
         } catch (Exception e) {
             //如果打开事务出错，则关闭它
-            closeTransaction(tx); // may have fetched a connection so lets call close()
+            closeTransaction(tx);
             throw ExceptionFactory.wrapException("Error opening session.  Cause: " + e, e);
         } finally {
             //最后清空错误上下文
@@ -68,7 +69,7 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
     private SqlSession getSessionFromConnection(Connection connection) {
         try {
             boolean autoCommit = true;
-            //强制性的默认自动提交
+            //强制性的自动提交
             //通过事务工厂来产生一个事务 根据Connection创建Transaction
             //生成一个执行器(事务包含在执行器里)
             //然后产生一个DefaultSqlSession

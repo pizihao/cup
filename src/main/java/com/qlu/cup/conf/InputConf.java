@@ -67,7 +67,7 @@ public class InputConf {
      * @author liuwenaho
      * @date 2021/1/26 20:18
      */
-    private static Properties getProperties(InputStream inputStream) {
+    public static Properties getProperties(InputStream inputStream) {
         return getProperties(new BufferedReader(new InputStreamReader(inputStream))
                 .lines().parallel().collect(Collectors.joining(System.lineSeparator())));
     }
@@ -79,7 +79,7 @@ public class InputConf {
      * @author liuwenaho
      * @date 2021/1/26 20:18
      */
-    private static Properties getProperties(Reader reader) {
+    public static Properties getProperties(Reader reader) {
         return getProperties(new BufferedReader(reader).lines().parallel()
                 .collect(Collectors.joining(System.lineSeparator())));
     }
@@ -93,11 +93,19 @@ public class InputConf {
      */
     private static Properties getProperties(String str) {
         Map<String, Object> map = YamlParser.yamlToMultilayerMap(str);
-        if (!map.containsKey(PartsUtil.NAME) || map.containsKey(PartsUtil.DATA_SOURCE)) {
+        Properties properties = new Properties();
+        if (!map.containsKey(PartsUtil.NAME)) {
             throw new ConfException("缺少配置信息");
         }
-        map = (Map<String, Object>) ((Map<String, Object>) map.get(PartsUtil.NAME)).get(PartsUtil.DATA_SOURCE);
-        Properties properties = new Properties();
+        map = (Map<String, Object>) map.get(PartsUtil.NAME);
+        if (!map.containsKey(PartsUtil.ENVIRONMENT) || !map.containsKey(PartsUtil.DATA_SOURCE)){
+            throw new ConfException("缺少配置信息");
+        }
+        properties.put(PartsUtil.ENVIRONMENT,map.get(PartsUtil.ENVIRONMENT));
+        if (map.containsKey(PartsUtil.MAPPER_PATH_NAME)){
+            properties.put(PartsUtil.MAPPER_PATH_NAME,map.get(PartsUtil.MAPPER_PATH_NAME));
+        }
+        map = (Map<String, Object>) map.get(PartsUtil.DATA_SOURCE);
         if (map != null) {
             properties.putAll(map);
         }

@@ -2,6 +2,8 @@ package com.qlu.cup;
 
 import com.qlu.cup.cutil.CupUtil;
 import com.qlu.cup.cutil.DbUtil;
+import com.qlu.cup.session.DefSqlSessionFactory;
+import com.qlu.cup.session.SqlSession;
 import org.junit.Test;
 
 /**
@@ -18,6 +20,13 @@ public class MyTest {
     
     @Test
     public void ymlTest(){
-        final CupUtil cupUtil = new CupUtil();
+        CupUtil cupUtil = new CupUtil();
     }
+
+    @Test
+    public void mapperTest(){
+        CupUtil cupUtil = new CupUtil();
+        SqlSession sqlSession = cupUtil.getSqlSession();
+    }
+
 }

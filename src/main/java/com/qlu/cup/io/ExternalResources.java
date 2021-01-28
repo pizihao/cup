@@ -11,7 +11,6 @@ import java.util.Properties;
 
 /**
  * @author liuwenhao
- * 类似于commons-io里的一些util方法,不过实际上没有任何地方用到了这个类
  */
 public class ExternalResources {
 

@@ -1,5 +1,5 @@
 mapper:
-  namespace: com.qlu.cup.mapper.UsersMapper
+  namespace: com.qlu.cup.mapper.PersonMapper
   insert:
     addUser:
       parameterType: com.qlu.cup.pojo.Person

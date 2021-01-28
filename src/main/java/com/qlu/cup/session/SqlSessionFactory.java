@@ -1,5 +1,7 @@
 package com.qlu.cup.session;
 
+import com.qlu.cup.bind.Configuration;
+import com.qlu.cup.context.Environment;
 import com.qlu.cup.transaction.TransactionIsolationLevel;
 
 import java.sql.Connection;
@@ -11,6 +13,7 @@ import java.sql.Connection;
  * @create: 2021-01-23 17:48
  **/
 public interface SqlSessionFactory {
+
     SqlSession getSession();
 
     SqlSession getSession(boolean autoCommit);
@@ -18,5 +21,7 @@ public interface SqlSessionFactory {
     SqlSession getSession(Connection connection);
 
     SqlSession getSession(TransactionIsolationLevel level);
+
+    Configuration getConfiguration();
 
 }

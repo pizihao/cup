@@ -1,8 +1,11 @@
 package com.qlu.cup.session;
 
+import com.qlu.cup.bind.Configuration;
+import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.result.ResultProcessor;
 
 import java.io.Closeable;
+import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
 
@@ -50,29 +53,18 @@ public interface SqlSession extends Closeable {
     <E> List<E> selectList(String statement, Object parameter);
 
     <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds);
-    /**
-     * 将查询到的结果列表转换为Map类型。
-     * @param <K> the returned Map keys type
-     * @param <V> the returned Map values type
-     * @param statement Unique identifier matching the statement to use.
-     * @param mapKey The property to use as key for each value in the list. 这个参数会作为结果map的key
-     * @return Map containing key pair data.
-     */
-    <K, V> Map<K, V> selectMap(String statement, String mapKey);
 
-    /**
-     * 将查询到的结果列表转换为Map类型。这个方法容许我们传入需要的参数
-     * @param <K> the returned Map keys type
-     * @param <V> the returned Map values type
-     * @param statement Unique identifier matching the statement to use.
-     * @param parameter A parameter object to pass to the statement.
-     * @param mapKey The property to use as key for each value in the list.
-     * @return Map containing key pair data.
-     */
-    <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey);
+    default <K, V> Map<K, V> selectMap(String statement, String mapKey){
+        throw new MapperException("不支持的返回类型");
+    }
 
+    default <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey){
+        throw new MapperException("不支持的返回类型");
+    }
 
-    <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds);
+    default <K, V> Map<K, V> selectMap(String statement, Object parameter, String mapKey, RowBounds rowBounds){
+        throw new MapperException("不支持的返回类型");
+    }
     /**
      * @param statement Unique identifier matching the statement to use.
      * @param parameter A parameter object to pass to the statement.
@@ -118,7 +110,7 @@ public interface SqlSession extends Closeable {
 
     /**
      * 删除记录
-     * @param 执行的语句
+     * @param statement 执行的语句
      * @return 返回的是受影响的行数
      */
     int delete(String statement);
@@ -139,12 +131,16 @@ public interface SqlSession extends Closeable {
 
     void rollback(boolean force);
 
+    public Connection getConnection();
+
+    Configuration getConfiguration();
     /**
      * 关闭Session
      */
     @Override
     void close();
 
+    <T> T getMapper(Class<T> type);
     /**
      * 清理Session缓存
      */

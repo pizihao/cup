@@ -32,9 +32,7 @@ public class ClassUtils {
 
     /**
      * 根据className加载class
-     *
      * @param className
-     * @return
      */
     public static Class forName(String className) {
         try {

@@ -8,23 +8,23 @@ import com.qlu.cup.exception.CupException;
  * @author: liuwenhao
  * @create: 2021-01-27 11:06
  **/
-public class MpaaerException extends CupException {
+public class MapperException extends CupException {
 
     private static final long serialVersionUID = -7537395265357977271L;
 
-    public MpaaerException() {
+    public MapperException() {
         super();
     }
 
-    public MpaaerException(String message) {
+    public MapperException(String message) {
         super(message);
     }
 
-    public MpaaerException(String message, Throwable cause) {
+    public MapperException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public MpaaerException(Throwable cause) {
+    public MapperException(Throwable cause) {
         super(cause);
     }
 }

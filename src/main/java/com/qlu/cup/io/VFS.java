@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * 虚拟文件系统(VFS),用来读取服务器里的资源
  *
- * @author Ben Gunter
+ * @author liuwenhao
  */
 public abstract class VFS {
     //默认提供2个实现 JBoss6VFS,DefaultVFS

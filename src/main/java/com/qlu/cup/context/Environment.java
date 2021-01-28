@@ -1,8 +1,11 @@
 package com.qlu.cup.context;
 
+import com.qlu.cup.builder.yml.YNode;
 import com.qlu.cup.transaction.TransactionFactory;
+import com.qlu.cup.util.PartsUtil;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 /**
  * @program: cup
@@ -17,8 +20,12 @@ public final class Environment {
   private final TransactionFactory transactionFactory;
   //数据源
   private final DataSource dataSource;
+  //映射文件
+  private final String mapperPath;
+  //class<?> 表示存储的命名空间的  类对象，这个是找映射的关键
+  private final Map<Class<?>, YNode> yNodeMap;
 
-  public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource) {
+  public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource, String mapperPath,Map<Class<?>, YNode> yNodeMap) {
     if (id == null) {
       throw new IllegalArgumentException("Parameter 'id' must not be null");
     }
@@ -29,8 +36,13 @@ public final class Environment {
     if (dataSource == null) {
       throw new IllegalArgumentException("Parameter 'dataSource' must not be null");
     }
+    if (mapperPath == null){
+      mapperPath = PartsUtil.MAPPER_PATH;
+    }
     this.transactionFactory = transactionFactory;
     this.dataSource = dataSource;
+    this.mapperPath = mapperPath;
+    this.yNodeMap = yNodeMap;
   }
 
   //建造模式
@@ -38,6 +50,8 @@ public final class Environment {
       private String id;
       private TransactionFactory transactionFactory;
       private DataSource dataSource;
+      private String mapperPath;
+      private Map<Class<?>, YNode> yNodeMap;
 
     public Builder(String id) {
       this.id = id;
@@ -53,12 +67,22 @@ public final class Environment {
       return this;
     }
 
+    public Builder mapperPath(String mapperPath) {
+      this.mapperPath = mapperPath;
+      return this;
+    }
+
+    public Builder yNodeMap(Map<Class<?>, YNode> yNodeMap) {
+      this.yNodeMap = yNodeMap;
+      return this;
+    }
+
     public String id() {
       return this.id;
     }
 
     public Environment build() {
-      return new Environment(this.id, this.transactionFactory, this.dataSource);
+      return new Environment(this.id, this.transactionFactory, this.dataSource,this.mapperPath,this.yNodeMap);
     }
 
   }
@@ -75,4 +99,11 @@ public final class Environment {
     return this.dataSource;
   }
 
+  public String getMapperPath() {
+    return mapperPath;
+  }
+
+  public Map<Class<?>, YNode> getyNodeMap() {
+    return yNodeMap;
+  }
 }

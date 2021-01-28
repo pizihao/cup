@@ -1,16 +1,16 @@
 package com.qlu.cup.builder.yml;
 
-import lombok.Builder;
-import lombok.Data;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @program: cup
- * @description: 节点，存储yml中的信息
+ * @description: 节点，存储yml中的信息,一个映射文件对应一个Ynode
  * @author: liuwenhao
  * @create: 2021-01-27 11:26
  **/
 //@Data
-//@Builder
+//@Builder(toBuilder = true)
 public class YNode {
 
     /**
@@ -19,9 +19,9 @@ public class YNode {
     private String name;
 
     /**
-     * 子节点，无子节点的话为空
+     * 子节点，没有子节点的话为空， String 为 接口方法名
      */
-    private YNode node;
+    private Map<String,YNode> node;
 
     /**
      * 节点内容
@@ -40,7 +40,7 @@ public class YNode {
     private String rootName;
 
     /**
-     * id,非必须节点，叶子节点特有
+     * id,非必须节点，叶子节点特有,代表操作，如select insert delete update
      */
     private String id;
 
@@ -75,7 +75,7 @@ public class YNode {
         return name;
     }
 
-    public YNode getNode() {
+    public Map<String,YNode> getNode() {
         return node;
     }
 
@@ -109,7 +109,7 @@ public class YNode {
 
     static class Builder {
         private String name;
-        private YNode node;
+        private Map<String,YNode> node;
         private String value;
         private String namespace;
         private String rootName;
@@ -119,7 +119,7 @@ public class YNode {
         private String parameterType;
         public Builder() {
         }
-        public Builder(String name, YNode node, String value, String namespace, String rootName) {
+        public Builder(String name, Map<String,YNode> node, String value, String namespace, String rootName) {
             this.name = name;
             this.node = node;
             this.value = value;
