@@ -2,6 +2,7 @@ package com.qlu.cup.bind;
 
 import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.builder.yml.YNode;
+import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.BoundSql;
@@ -10,7 +11,6 @@ import com.qlu.cup.mapper.MapperProxyFactory;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,8 +81,10 @@ public class Configuration {
 
     public Configuration(Environment environment) {
         this.environment = environment;
-
         for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()) {
+            if (YmlMapperRead.checkOverload(entry.getKey())) {
+                throw new BindException("禁止在"+ entry.getKey() +"中出现方法重载");
+            }
             sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode()));
             knownMappers.put(entry.getKey(), new MapperProxyFactory<>(entry.getKey()));
         }

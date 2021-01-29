@@ -1,14 +1,17 @@
 package com.qlu.cup;
 
 import com.qlu.cup.bind.Configuration;
+import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.cutil.CupUtil;
 import com.qlu.cup.cutil.DbUtil;
 import com.qlu.cup.mapper.UsersMapper;
+import com.qlu.cup.pojo.Users;
 import com.qlu.cup.session.DefSqlSessionFactory;
 import com.qlu.cup.session.SqlSession;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * @program: JVMDome
@@ -32,12 +35,16 @@ public class MyTest {
         CupUtil cupUtil = new CupUtil();
         SqlSession sqlSession = cupUtil.getSqlSession();
         UsersMapper mapper = sqlSession.getMapper(UsersMapper.class);
+//        List<Users> userList = mapper.getUserList();
+//        System.out.println(userList);
     }
 
     @Test
-    public void stringTest() {
-        String statement = "com.qlu.cup.UsersMapper.getUserList";
-        String className = statement.substring(0, statement.lastIndexOf("."));
-        System.out.println(className);
+    public void method(){
+        try {
+            System.out.println(YmlMapperRead.checkOverload(Class.forName("com.qlu.cup.mapper.PersonMapper")));
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
