@@ -1,12 +1,15 @@
 package com.qlu.cup.bind;
 
+import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.builder.yml.YNode;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.mapper.BoundSqlBuilder;
+import com.qlu.cup.mapper.MapperProxyFactory;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
+import com.qlu.cup.util.PartsUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,20 +26,31 @@ public class Configuration {
 
     protected Environment environment;
 
-    protected Map<String,BoundSql> sqlMap = new HashMap<>(16);
+    protected Map<Class<?>,BoundSql> sqlMap = new HashMap<>(16);
+
+    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
     /**
      * @param type    接口
-     * @param session 当前的sqlSession
+     * @param sqlSession 当前的sqlSession
      * @return T
      * @description: 使用SQLSession创建一个mapper接口的代理，使用反射，通过这个代理去执行接口的方法
      * @author liuwenaho
      * @date 2021/1/28 14:07
      */
-    public <T> T getMapper(Class<T> type, SqlSession session) {
-        YNode yNode = getEnvironment().getyNodeMap().get(type);
-        sqlMap = BoundSqlBuilder.builder(yNode.getNode());
-        return null;
+    public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
+        if (!sqlMap.containsKey(type)){
+            throw new MapperException("找不到映射信息" + type);
+        }
+        final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
+        if (mapperProxyFactory == null) {
+            throw new BindException("找不到映射信息" + type);
+        }
+        try {
+            return mapperProxyFactory.newInstance(sqlSession);
+        } catch (Exception e) {
+            throw new BindException("Error getting mapper instance. Cause: " + e, e);
+        }
     }
 
     /**
@@ -47,10 +61,17 @@ public class Configuration {
      * @date 2021/1/28 14:15
      */
     public BoundSql getMappedYnode(String statement) {
-        if (!sqlMap.containsKey(statement)){
-            throw new BindException("接口和映射文件绑定失败");
+        Class<?> forName;
+        try {
+            forName = Class.forName(statement);
+            if (!sqlMap.containsKey(forName)){
+                throw new BindException("找不到映射信息" + statement);
+            }
+            return sqlMap.get(forName);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-        return sqlMap.get(statement);
+        return null;
     }
 
     /**
@@ -67,17 +88,22 @@ public class Configuration {
         this.environment = environment;
     }
 
-    public Map<String, BoundSql> getSqlMap() {
-        return sqlMap;
-    }
-
-    public void setSqlMap(Map<String, BoundSql> sqlMap) {
+    public void setSqlMap(Map<Class<?>, BoundSql> sqlMap) {
         this.sqlMap = sqlMap;
     }
 
     public Configuration(Environment environment){
         this.environment = environment;
+        for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()){
+            sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode()));
+            knownMappers.put(entry.getKey(),new MapperProxyFactory<>(entry.getKey()));
+        }
     }
+
+    public Map<Class<?>, BoundSql> getSqlMap() {
+        return sqlMap;
+    }
+
     public boolean hasNode(String nameSpace, String statementName) {
         boolean hasnode = false;
         try {

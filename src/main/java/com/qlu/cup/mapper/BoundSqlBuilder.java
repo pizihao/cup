@@ -15,11 +15,16 @@ import java.util.Map;
  **/
 public class BoundSqlBuilder {
 
-    public static Map<String,BoundSql> builder(Map<String, YNode> nodeMap) {
-        Map<String,BoundSql> hashMap = new HashMap<>(16);
+    public static Map<Class<?>,BoundSql> builder(Map<String, YNode> nodeMap) {
+        Map<Class<?>,BoundSql> hashMap = new HashMap<>(16);
         nodeMap.forEach((aClass, yNode) -> {
-            hashMap.put(yNode.getNamespace() + yNode.getName(),new BoundSql(yNode.getId(), yNode.getSql()
-                    , yNode.getParameterType(), yNode.getResultType(), yNode.getNamespace() + yNode.getName()));
+            String classId = yNode.getNamespace() +"."+ yNode.getName();
+            try {
+                hashMap.put(Class.forName(classId),new BoundSql(yNode.getId(), yNode.getSql()
+                        , yNode.getParameterType(), yNode.getResultType(), classId));
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         });
         return hashMap;
     }
