@@ -38,8 +38,8 @@ public class BoundSql {
     public BoundSql(String handle,String sql,String parameterType,String resultType,String ID) {
         this.handle = handle;
         this.ID = ID;
-        this.parameterType = getClazz(parameterType);
-        this.resultType = getClazz(resultType);
+        this.parameterType = ObjectInterface.getClazz(parameterType);
+        this.resultType = ObjectInterface.getClazz(resultType);
         this.sql = sql;
     }
 
@@ -83,69 +83,4 @@ public class BoundSql {
         this.ID = ID;
     }
 
-    public static Class<?> getClazz(String str) {
-        if (str == null || "".equals(str)){
-            return null;
-        }
-        Class<?> classToCreate = null;
-        switch (str){
-            case "List":
-            case "Collection":
-            case "Iterable":
-                classToCreate = ArrayList.class;
-                break;
-            case "Map":
-                classToCreate = HashMap.class;
-                break;
-            case "SortedSet":
-                classToCreate = TreeSet.class;
-                break;
-            case "Set":
-                classToCreate = HashSet.class;
-                break;
-            case "int":
-            case "Integer":
-                classToCreate = int.class;
-                break;
-            case "double":
-            case "Double":
-                classToCreate = double.class;
-                break;
-            case "float":
-            case "Float":
-                classToCreate = float.class;
-                break;
-            case "long":
-            case "Long":
-                classToCreate = long.class;
-                break;
-            case "char":
-            case "Character":
-                classToCreate = char.class;
-                break;
-            case "short":
-            case "Short":
-                classToCreate = short.class;
-                break;
-            case "boolean":
-            case "Boolean":
-                classToCreate = boolean.class;
-                break;
-            case "void":
-            case "Void":
-                classToCreate = void.class;
-                break;
-            case "String":
-                classToCreate = String.class;
-                break;
-            default:
-                try {
-                    classToCreate = Class.forName(str);
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-                break;
-        }
-        return classToCreate;
-    }
 }
