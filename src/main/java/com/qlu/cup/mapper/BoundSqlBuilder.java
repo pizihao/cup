@@ -2,6 +2,7 @@ package com.qlu.cup.mapper;
 
 import com.qlu.cup.builder.yml.YNode;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,16 +16,12 @@ import java.util.Map;
  **/
 public class BoundSqlBuilder {
 
-    public static Map<Class<?>,BoundSql> builder(Map<String, YNode> nodeMap) {
-        Map<Class<?>,BoundSql> hashMap = new HashMap<>(16);
+    public static Map<String, BoundSql> builder(Map<String, YNode> nodeMap) {
+        Map<String, BoundSql> hashMap = new HashMap<>(16);
         nodeMap.forEach((aClass, yNode) -> {
-            String classId = yNode.getNamespace() +"."+ yNode.getName();
-            try {
-                hashMap.put(Class.forName(classId),new BoundSql(yNode.getId(), yNode.getSql()
-                        , yNode.getParameterType(), yNode.getResultType(), classId));
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
+            String classId = yNode.getNamespace() + "." + yNode.getName();
+            hashMap.put(classId, new BoundSql(yNode.getId(), yNode.getSql()
+                    , yNode.getParameterType(), yNode.getResultType(), classId));
         });
         return hashMap;
     }

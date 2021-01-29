@@ -9,11 +9,9 @@ import com.qlu.cup.mapper.BoundSqlBuilder;
 import com.qlu.cup.mapper.MapperProxyFactory;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
-import com.qlu.cup.util.PartsUtil;
 
-import java.util.ArrayList;
+import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,12 +24,12 @@ public class Configuration {
 
     protected Environment environment;
 
-    protected Map<Class<?>,BoundSql> sqlMap = new HashMap<>(16);
+    protected static Map<String, BoundSql> sqlMap = new HashMap<>(16);
 
     private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
 
     /**
-     * @param type    接口
+     * @param type       接口
      * @param sqlSession 当前的sqlSession
      * @return T
      * @description: 使用SQLSession创建一个mapper接口的代理，使用反射，通过这个代理去执行接口的方法
@@ -39,7 +37,7 @@ public class Configuration {
      * @date 2021/1/28 14:07
      */
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        if (!sqlMap.containsKey(type)){
+        if (!environment.getyNodeMap().containsKey(type)) {
             throw new MapperException("找不到映射信息" + type);
         }
         final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
@@ -61,17 +59,10 @@ public class Configuration {
      * @date 2021/1/28 14:15
      */
     public BoundSql getMappedYnode(String statement) {
-        Class<?> forName;
-        try {
-            forName = Class.forName(statement);
-            if (!sqlMap.containsKey(forName)){
-                throw new BindException("找不到映射信息" + statement);
-            }
-            return sqlMap.get(forName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+        if (!sqlMap.containsKey(statement)) {
+            throw new BindException("找不到映射信息" + statement);
         }
-        return null;
+        return sqlMap.get(statement);
     }
 
     /**
@@ -88,30 +79,27 @@ public class Configuration {
         this.environment = environment;
     }
 
-    public void setSqlMap(Map<Class<?>, BoundSql> sqlMap) {
-        this.sqlMap = sqlMap;
-    }
-
-    public Configuration(Environment environment){
+    public Configuration(Environment environment) {
         this.environment = environment;
-        for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()){
+
+        for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()) {
             sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode()));
-            knownMappers.put(entry.getKey(),new MapperProxyFactory<>(entry.getKey()));
+            knownMappers.put(entry.getKey(), new MapperProxyFactory<>(entry.getKey()));
         }
     }
 
-    public Map<Class<?>, BoundSql> getSqlMap() {
+    public Map<String, BoundSql> getSqlMap() {
         return sqlMap;
     }
 
     public boolean hasNode(String nameSpace, String statementName) {
-        boolean hasnode = false;
+        boolean hasNode = false;
         try {
-            hasnode = environment.hasNode(Class.forName(nameSpace), statementName);
+            hasNode = environment.hasNode(Class.forName(nameSpace), statementName);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return hasnode;
+        return hasNode;
     }
 
     public Executor newExecutor(Transaction tx) {

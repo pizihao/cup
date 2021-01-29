@@ -8,6 +8,8 @@ import com.qlu.cup.session.DefSqlSessionFactory;
 import com.qlu.cup.session.SqlSession;
 import org.junit.Test;
 
+import java.lang.reflect.Method;
+
 /**
  * @program: JVMDome
  * @description: 测试类
@@ -16,20 +18,26 @@ import org.junit.Test;
  **/
 public class MyTest {
     @Test
-    public void test(){
+    public void test() {
         DbUtil.selectList();
     }
-    
+
     @Test
-    public void ymlTest(){
+    public void ymlTest() {
         CupUtil cupUtil = new CupUtil();
     }
 
     @Test
-    public void mapperTest(){
+    public void mapperTest() {
         CupUtil cupUtil = new CupUtil();
         SqlSession sqlSession = cupUtil.getSqlSession();
         UsersMapper mapper = sqlSession.getMapper(UsersMapper.class);
     }
 
+    @Test
+    public void stringTest() {
+        String statement = "com.qlu.cup.UsersMapper.getUserList";
+        String className = statement.substring(0, statement.lastIndexOf("."));
+        System.out.println(className);
+    }
 }

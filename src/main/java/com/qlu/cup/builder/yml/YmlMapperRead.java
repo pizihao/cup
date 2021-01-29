@@ -1,8 +1,6 @@
 package com.qlu.cup.builder.yml;
 
-import com.qlu.cup.io.Resources;
 import com.qlu.cup.io.SacnYmlMapper;
-
 import java.io.*;
 import java.util.*;
 
@@ -14,6 +12,13 @@ import java.util.*;
  **/
 public class YmlMapperRead {
 
+    /**
+     * @description: 将指定的mapper.yml文件读取成Map<Class<?>, YNode>数据
+     * @param mapperPath mapper.yml 文件路径
+     * @return Map<Class<?>, YNode>
+     * @author liuwenaho
+     * @date 2021/1/29 20:20
+     */
     public static Map<Class<?>, YNode> getMapper(String mapperPath) {
         String path = mapperPath.substring(0, mapperPath.lastIndexOf("*"));
         String yml = mapperPath.substring(mapperPath.lastIndexOf("*"));
@@ -29,5 +34,9 @@ public class YmlMapperRead {
             e.printStackTrace();
         }
         return nodeMap;
+    }
+
+    public static void checkOverload(){
+
     }
 }

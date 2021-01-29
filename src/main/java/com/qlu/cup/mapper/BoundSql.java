@@ -1,10 +1,5 @@
 package com.qlu.cup.mapper;
 
-import com.qlu.cup.bind.Configuration;
-import com.qlu.cup.builder.yml.MapperException;
-
-import java.util.*;
-
 /**
  * SQL，参数和命名空间+id进行绑定
  */

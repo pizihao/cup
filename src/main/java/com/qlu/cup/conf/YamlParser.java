@@ -291,17 +291,4 @@ public class YamlParser {
         return true;
     }
 
-
-    public static void main(String[] args) throws IOException {
-        File file = new File(YamlParser.class.getResource("/").getFile() + "cup-conf.yml");
-        String content = Files.toString(file, Charsets.UTF_8);
-        Map<String, Object> a = YamlParser.yamlToFlattenedMap(content);
-        System.out.println(a);
-        Map<String, Object> b = YamlParser.yamlToMultilayerMap(content);
-        System.out.println(b);
-        String c = YamlParser.multilayerMapToYaml(b);
-        System.out.println(c);
-        String d = YamlParser.flattenedMapToYaml(a);
-        System.out.println(d);
-    }
 }

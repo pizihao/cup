@@ -75,7 +75,6 @@ public class YmlMapperBuilder {
 
     /**
      * @param obj yml文件中的最底层节点
-     * @return void
      * @description: TODO
      * @author liuwenaho
      * @date 2021/1/27 21:33
