@@ -17,18 +17,26 @@ import java.util.List;
  **/
 public interface Executor {
 
-    //不需要ResultProcessor
     ResultProcessor NO_RESULT_HANDLER = null;
 
-    //更新
+    /**
+     * 更新
+     */
     int update(BoundSql boundSql, Object parameter) throws SQLException;
 
-    //查询，带分页
+    /**
+     * 查询，带分页
+     */
     <E> List<E> query(BoundSql boundSql, Object parameter, RowBounds rowBounds, ResultProcessor ResultProcessor) throws SQLException;
 
-    //提交和回滚，参数是是否要强制
+    /**
+     * 提交，参数是是否要强制
+     */
     void commit(boolean required) throws SQLException;
 
+    /**
+     * 回滚，参数是是否要强制
+     */
     void rollback(boolean required) throws SQLException;
 
     Transaction getTransaction();

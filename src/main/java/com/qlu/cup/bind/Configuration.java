@@ -40,14 +40,17 @@ public class Configuration {
     }
 
     /**
-     * @param statement YNode的nameSpace + name，代表执行的操作
+     * @param statement YNode的nameSpace + name，代表执行的方法
      * @return com.qlu.cup.builder.yml.YNode
      * @description: 获取statement对应的数据信息
      * @author liuwenaho
      * @date 2021/1/28 14:15
      */
     public BoundSql getMappedYnode(String statement) {
-        return null;
+        if (!sqlMap.containsKey(statement)){
+            throw new BindException("接口和映射文件绑定失败");
+        }
+        return sqlMap.get(statement);
     }
 
     /**
