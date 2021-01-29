@@ -8,6 +8,7 @@ import com.qlu.cup.context.ErrorContext;
 import com.qlu.cup.exception.ExceptionFactory;
 import com.qlu.cup.exception.TooManyResultsException;
 import com.qlu.cup.executor.Executor;
+import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.result.ResultProcessor;
 
 import java.sql.Connection;
@@ -70,8 +71,8 @@ public class DefSqlSession implements SqlSession {
     @Override
     public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
         try {
-            YNode ms = configuration.getMappedYnode(statement);
-            return executor.query(ms, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
+            BoundSql boundSql = configuration.getMappedYnode(statement);
+            return executor.query(boundSql, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
         } finally {
@@ -92,8 +93,8 @@ public class DefSqlSession implements SqlSession {
     @Override
     public void select(String statement, Object parameter, RowBounds rowBounds, ResultProcessor handler) {
         try {
-            YNode node = configuration.getMappedYnode(statement);
-            executor.query(node, wrapCollection(parameter), rowBounds, handler);
+            BoundSql boundSql = configuration.getMappedYnode(statement);
+            executor.query(boundSql, wrapCollection(parameter), rowBounds, handler);
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
         } finally {
@@ -115,8 +116,8 @@ public class DefSqlSession implements SqlSession {
     public int update(String statement, Object parameter) {
         try {
             dirty = true;
-            YNode node = configuration.getMappedYnode(statement);
-            return executor.update(node, wrapCollection(parameter));
+            BoundSql boundSql = configuration.getMappedYnode(statement);
+            return executor.update(boundSql, wrapCollection(parameter));
         } catch (Exception e) {
             throw ExceptionFactory.wrapException("Error updating database.  Cause: " + e, e);
         } finally {

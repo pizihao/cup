@@ -24,21 +24,21 @@ public class SqlCommand {
 
     public SqlCommand(Configuration configuration, Class<?> mapperInterface, Method method) {
         String statementName = mapperInterface.getName() + "." + method.getName();
-        YNode node = null;
+        BoundSql boundSql = null;
         if (configuration.hasNode(mapperInterface.getName(),statementName)) {
-            node = configuration.getMappedYnode(statementName);
+            boundSql = configuration.getMappedYnode(statementName);
         } else if (!mapperInterface.equals(method.getDeclaringClass().getName())) {
             //如果不是这个mapper接口的方法，再去查父类
             String parentStatementName = method.getDeclaringClass().getName() + "." + method.getName();
             if (configuration.hasNode(mapperInterface.getName(),parentStatementName)) {
-                node = configuration.getMappedYnode(parentStatementName);
+                boundSql = configuration.getMappedYnode(parentStatementName);
             }
         }
-        if (node == null) {
+        if (boundSql == null) {
             throw new BindException("Invalid bound statement (not found): " + statementName);
         }
-        name = node.getNamespace() + "." + node.getName();
-        type = node.getId();
+        name = boundSql.getID();
+        type = boundSql.getHandle();
     }
 
     public String getName() {

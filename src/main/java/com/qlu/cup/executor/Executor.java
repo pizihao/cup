@@ -1,6 +1,7 @@
 package com.qlu.cup.executor;
 
 import com.qlu.cup.builder.yml.YNode;
+import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.result.ResultProcessor;
 import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.transaction.Transaction;
@@ -20,10 +21,10 @@ public interface Executor {
     ResultProcessor NO_RESULT_HANDLER = null;
 
     //更新
-    int update(YNode ms, Object parameter) throws SQLException;
+    int update(BoundSql boundSql, Object parameter) throws SQLException;
 
     //查询，带分页
-    <E> List<E> query(YNode ms, Object parameter, RowBounds rowBounds, ResultProcessor ResultProcessor) throws SQLException;
+    <E> List<E> query(BoundSql boundSql, Object parameter, RowBounds rowBounds, ResultProcessor ResultProcessor) throws SQLException;
 
     //提交和回滚，参数是是否要强制
     void commit(boolean required) throws SQLException;

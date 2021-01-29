@@ -46,7 +46,7 @@ public class Configuration {
      * @author liuwenaho
      * @date 2021/1/28 14:15
      */
-    public YNode getMappedYnode(String statement) {
+    public BoundSql getMappedYnode(String statement) {
         return null;
     }
 
