@@ -5,11 +5,15 @@ import com.qlu.cup.builder.yml.YNode;
 import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.executor.Executor;
-import com.qlu.cup.mapper.BoundSql;
-import com.qlu.cup.mapper.BoundSqlBuilder;
-import com.qlu.cup.mapper.MapperProxyFactory;
+import com.qlu.cup.mapper.*;
+import com.qlu.cup.result.DefaultResultSetHandler;
+import com.qlu.cup.result.ResultProcessor;
+import com.qlu.cup.result.ResultSetHandler;
+import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
+import com.qlu.cup.type.TypeHandlerRegistry;
+import com.qlu.cup.util.InterceptorChain;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,11 +26,17 @@ import java.util.Map;
  **/
 public class Configuration {
 
+    private static Configuration configuration;
+
     protected Environment environment;
+
+    private TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
 
     protected static Map<String, BoundSql> sqlMap = new HashMap<>(16);
 
     private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+
+    protected final InterceptorChain interceptorChain = new InterceptorChain();
 
     /**
      * @param type       接口
@@ -83,11 +93,18 @@ public class Configuration {
         this.environment = environment;
         for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()) {
             if (YmlMapperRead.checkOverload(entry.getKey())) {
-                throw new BindException("禁止在"+ entry.getKey() +"中出现方法重载");
+                throw new BindException("禁止在" + entry.getKey() + "中出现方法重载");
             }
             sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode()));
             knownMappers.put(entry.getKey(), new MapperProxyFactory<>(entry.getKey()));
         }
+    }
+
+    public static Configuration getConfiguration(Environment environment) {
+        if (configuration == null) {
+            configuration = new Configuration(environment);
+        }
+        return configuration;
     }
 
     public Map<String, BoundSql> getSqlMap() {
@@ -106,5 +123,26 @@ public class Configuration {
 
     public Executor newExecutor(Transaction tx) {
         return null;
+    }
+
+    public TypeHandlerRegistry getTypeHandlerRegistry() {
+        return typeHandlerRegistry;
+    }
+
+    //创建参数处理器
+    public ParameterHandler newParameterHandler( Object parameterObject, BoundSql boundSql) {
+        //创建ParameterHandler
+        ParameterHandler parameterHandler = new DefaultParameterHandler(parameterObject, boundSql);
+        //插件在这里插入
+        parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
+        return parameterHandler;
+    }
+
+    public ResultSetHandler newResultSetHandler(Executor executor, RowBounds rowBounds, ParameterHandler parameterHandler,
+                                                ResultProcessor resultHandler, BoundSql boundSql) {
+        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, parameterHandler, resultHandler, boundSql, rowBounds);
+        //插件在这里插入
+        resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
+        return resultSetHandler;
     }
 }
