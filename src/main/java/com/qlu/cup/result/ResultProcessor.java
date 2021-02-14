@@ -7,5 +7,5 @@ package com.qlu.cup.result;
  * @create: 2021-01-23 18:26
  **/
 public interface ResultProcessor {
-
+    void handleResult(ResultContext context);
 }
