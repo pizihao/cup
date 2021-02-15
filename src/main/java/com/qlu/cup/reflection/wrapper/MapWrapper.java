@@ -1,9 +1,9 @@
-package reflection.wrapper;
+package com.qlu.cup.reflection.wrapper;
 
-import reflection.MetaObject;
-import reflection.SystemMetaObject;
-import reflection.factory.ObjectFactory;
-import reflection.property.PropertyTokenizer;
+import com.qlu.cup.reflection.MetaObject;
+import com.qlu.cup.reflection.factory.ObjectFactory;
+import com.qlu.cup.reflection.SystemMetaObject;
+import com.qlu.cup.reflection.property.PropertyTokenizer;
 
 import java.util.HashMap;
 import java.util.List;

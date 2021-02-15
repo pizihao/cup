@@ -1,9 +1,9 @@
-package reflection;
+package com.qlu.cup.reflection;
 
-import reflection.factory.DefaultObjectFactory;
-import reflection.factory.ObjectFactory;
-import reflection.wrapper.DefaultObjectWrapperFactory;
-import reflection.wrapper.ObjectWrapperFactory;
+import com.qlu.cup.reflection.factory.ObjectFactory;
+import com.qlu.cup.reflection.wrapper.DefaultObjectWrapperFactory;
+import com.qlu.cup.reflection.factory.DefaultObjectFactory;
+import com.qlu.cup.reflection.wrapper.ObjectWrapperFactory;
 
 /**
  * 一些系统级别的元对象

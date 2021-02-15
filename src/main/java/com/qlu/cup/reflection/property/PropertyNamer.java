@@ -1,6 +1,6 @@
-package reflection.property;
+package com.qlu.cup.reflection.property;
 
-import reflection.ReflectionException;
+import com.qlu.cup.reflection.ReflectionException;
 
 import java.util.Locale;
 

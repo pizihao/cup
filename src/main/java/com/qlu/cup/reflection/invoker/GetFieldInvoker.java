@@ -1,22 +1,22 @@
-package reflection.invoker;
+package com.qlu.cup.reflection.invoker;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * setter调用者
+ * getter调用者
  */
-public class SetFieldInvoker implements Invoker {
+public class GetFieldInvoker implements Invoker {
     private Field field;
 
-    public SetFieldInvoker(Field field) {
+    public GetFieldInvoker(Field field) {
         this.field = field;
     }
 
+    //就是调用Field.get
     @Override
     public Object invoke(Object target, Object[] args) throws IllegalAccessException, InvocationTargetException {
-        field.set(target, args[0]);
-        return null;
+        return field.get(target);
     }
 
     @Override

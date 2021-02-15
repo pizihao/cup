@@ -1,4 +1,4 @@
-package reflection;
+package com.qlu.cup.reflection;
 
 import com.qlu.cup.exception.CupException;
 

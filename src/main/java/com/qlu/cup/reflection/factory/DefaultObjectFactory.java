@@ -1,6 +1,6 @@
-package reflection.factory;
+package com.qlu.cup.reflection.factory;
 
-import reflection.ReflectionException;
+import com.qlu.cup.reflection.ReflectionException;
 
 import java.io.Serializable;
 import java.lang.reflect.Constructor;

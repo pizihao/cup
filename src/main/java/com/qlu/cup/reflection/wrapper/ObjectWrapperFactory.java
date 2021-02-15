@@ -1,7 +1,7 @@
-package reflection.wrapper;
+package com.qlu.cup.reflection.wrapper;
 
 
-import reflection.MetaObject;
+import com.qlu.cup.reflection.MetaObject;
 
 /**
  * 对象包装器工厂

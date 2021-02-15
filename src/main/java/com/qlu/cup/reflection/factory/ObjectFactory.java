@@ -1,4 +1,4 @@
-package reflection.factory;
+package com.qlu.cup.reflection.factory;
 
 import java.util.List;
 import java.util.Properties;

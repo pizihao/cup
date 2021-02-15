@@ -1,8 +1,8 @@
-package reflection.wrapper;
+package com.qlu.cup.reflection.wrapper;
 
 
-import reflection.MetaObject;
-import reflection.ReflectionException;
+import com.qlu.cup.reflection.MetaObject;
+import com.qlu.cup.reflection.ReflectionException;
 
 /**
  * 默认对象包装器工厂

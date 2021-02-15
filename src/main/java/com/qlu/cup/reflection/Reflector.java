@@ -1,10 +1,10 @@
-package reflection;
+package com.qlu.cup.reflection;
 
-import reflection.invoker.GetFieldInvoker;
-import reflection.invoker.Invoker;
-import reflection.invoker.MethodInvoker;
-import reflection.invoker.SetFieldInvoker;
-import reflection.property.PropertyNamer;
+import com.qlu.cup.reflection.invoker.MethodInvoker;
+import com.qlu.cup.reflection.invoker.GetFieldInvoker;
+import com.qlu.cup.reflection.invoker.Invoker;
+import com.qlu.cup.reflection.invoker.SetFieldInvoker;
+import com.qlu.cup.reflection.property.PropertyNamer;
 
 import java.lang.reflect.*;
 import java.util.*;

@@ -1,4 +1,4 @@
-package reflection.property;
+package com.qlu.cup.reflection.property;
 
 import java.util.Iterator;
 

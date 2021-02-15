@@ -1,4 +1,4 @@
-package reflection.invoker;
+package com.qlu.cup.reflection.invoker;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

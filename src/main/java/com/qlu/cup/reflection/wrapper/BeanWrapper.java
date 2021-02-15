@@ -1,13 +1,13 @@
-package reflection.wrapper;
+package com.qlu.cup.reflection.wrapper;
 
+import com.qlu.cup.reflection.MetaClass;
+import com.qlu.cup.reflection.MetaObject;
+import com.qlu.cup.reflection.ReflectionException;
+import com.qlu.cup.reflection.SystemMetaObject;
+import com.qlu.cup.reflection.factory.ObjectFactory;
+import com.qlu.cup.reflection.invoker.Invoker;
+import com.qlu.cup.reflection.property.PropertyTokenizer;
 import com.qlu.cup.util.ExceptionUtil;
-import reflection.MetaClass;
-import reflection.MetaObject;
-import reflection.ReflectionException;
-import reflection.SystemMetaObject;
-import reflection.factory.ObjectFactory;
-import reflection.invoker.Invoker;
-import reflection.property.PropertyTokenizer;
 
 import java.util.List;
 

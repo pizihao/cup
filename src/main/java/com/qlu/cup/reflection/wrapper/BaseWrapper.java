@@ -1,8 +1,8 @@
-package reflection.wrapper;
+package com.qlu.cup.reflection.wrapper;
 
-import reflection.MetaObject;
-import reflection.ReflectionException;
-import reflection.property.PropertyTokenizer;
+import com.qlu.cup.reflection.MetaObject;
+import com.qlu.cup.reflection.ReflectionException;
+import com.qlu.cup.reflection.property.PropertyTokenizer;
 
 import java.util.List;
 import java.util.Map;

@@ -1,8 +1,8 @@
-package reflection;
+package com.qlu.cup.reflection;
 
-import reflection.factory.ObjectFactory;
-import reflection.property.PropertyTokenizer;
-import reflection.wrapper.*;
+import com.qlu.cup.reflection.factory.ObjectFactory;
+import com.qlu.cup.reflection.property.PropertyTokenizer;
+import com.qlu.cup.reflection.wrapper.*;
 
 import java.util.Collection;
 import java.util.List;

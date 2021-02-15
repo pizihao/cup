@@ -1,4 +1,4 @@
-package reflection;
+package com.qlu.cup.reflection;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
