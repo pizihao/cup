@@ -1,6 +1,7 @@
 package com.qlu.cup.mapper;
 
 import com.qlu.cup.bind.Configuration;
+import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.logging.Log;
 import com.qlu.cup.logging.LogFactory;
@@ -10,6 +11,9 @@ import com.qlu.cup.statement.ParameterMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * SQL，参数和命名空间+id进行绑定
@@ -72,17 +76,33 @@ public class BoundSql {
     private Log statementLog;
 
     public BoundSql(String handle, String sql, String parameterType, String resultType, String ID,
-                    Configuration configuration, SqlSource sqlSource) {
+                    Environment environment, SqlSource sqlSource) {
         this.handle = handle;
         this.ID = ID;
         this.parameterType = ObjectInterface.getClazz(parameterType);
         this.resultType = ObjectInterface.getClazz(resultType);
         this.sql = sql;
-        this.environment = configuration.getEnvironment();
+        this.environment = environment;
         this.sqlSource = sqlSource;
-        this.parameterMap = new ParameterMap.Builder(configuration, "defaultParameterMap", null, new ArrayList<ParameterMapping>()).build();
+        this.parameterMap = new ParameterMap.Builder("defaultParameterMap", null, new ArrayList<ParameterMapping>()).build();
         this.resultMaps = new ArrayList<ResultMap>();
         this.statementLog = LogFactory.getLog(ID);
+    }
+
+    public static BoundSql getBoundSql(Configuration configuration, String sql, List<ParameterMapping> parameterMappings, Object parameterObject) {
+        Map<String, BoundSql> sqlMap = Configuration.getConfiguration(configuration.getEnvironment()).getSqlMap();
+        AtomicReference<BoundSql> hasSql = new AtomicReference<>();
+        AtomicBoolean count = new AtomicBoolean(false);
+        sqlMap.forEach((s, boundSql) -> {
+            if (boundSql.sql.equals(sql)) {
+                count.set(true);
+                hasSql.set(boundSql);
+            }
+        });
+        if (count.get()) {
+            throw new MapperException("没有找到对应的SQL" + sql);
+        }
+        return hasSql.get();
     }
 
     public String getSql() {

@@ -6,7 +6,7 @@ import com.qlu.cup.statement.ParameterMapping;
 import com.qlu.cup.type.JdbcType;
 import com.qlu.cup.type.TypeHandler;
 import com.qlu.cup.type.TypeHandlerRegistry;
-import reflection.MetaObject;
+import com.qlu.cup.reflection.MetaObject;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;

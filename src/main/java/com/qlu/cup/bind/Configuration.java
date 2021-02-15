@@ -6,14 +6,20 @@ import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.*;
+import com.qlu.cup.reflection.factory.DefaultObjectFactory;
 import com.qlu.cup.result.DefaultResultSetHandler;
 import com.qlu.cup.result.ResultProcessor;
 import com.qlu.cup.result.ResultSetHandler;
 import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
+import com.qlu.cup.type.JdbcType;
 import com.qlu.cup.type.TypeHandlerRegistry;
 import com.qlu.cup.util.InterceptorChain;
+import com.qlu.cup.reflection.MetaObject;
+import com.qlu.cup.reflection.factory.ObjectFactory;
+import com.qlu.cup.reflection.wrapper.DefaultObjectWrapperFactory;
+import com.qlu.cup.reflection.wrapper.ObjectWrapperFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,13 +36,17 @@ public class Configuration {
 
     protected Environment environment;
 
-    private TypeHandlerRegistry typeHandlerRegistry = new TypeHandlerRegistry();
+    private TypeHandlerRegistry typeHandlerRegistry;
 
     protected static Map<String, BoundSql> sqlMap = new HashMap<>(16);
 
-    private final Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+    private static Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
 
-    protected final InterceptorChain interceptorChain = new InterceptorChain();
+    protected final InterceptorChain interceptorChain;
+
+    protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
+    protected ObjectFactory objectFactory = new DefaultObjectFactory();
+    protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
 
     /**
      * @param type       接口
@@ -91,18 +101,22 @@ public class Configuration {
 
     public Configuration(Environment environment) {
         this.environment = environment;
-        for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()) {
-            if (YmlMapperRead.checkOverload(entry.getKey())) {
-                throw new BindException("禁止在" + entry.getKey() + "中出现方法重载");
-            }
-            sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode()));
-            knownMappers.put(entry.getKey(), new MapperProxyFactory<>(entry.getKey()));
-        }
+        this.typeHandlerRegistry = new TypeHandlerRegistry();
+        this.interceptorChain = new InterceptorChain();
     }
 
     public static Configuration getConfiguration(Environment environment) {
         if (configuration == null) {
             configuration = new Configuration(environment);
+        }
+        if (configuration.getSqlMap().isEmpty() && configuration.getKnownMappers().isEmpty()) {
+            for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()) {
+                if (YmlMapperRead.checkOverload(entry.getKey())) {
+                    throw new BindException("禁止在" + entry.getKey() + "中出现方法重载");
+                }
+                sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode(), configuration));
+                knownMappers.put(entry.getKey(), new MapperProxyFactory<>(entry.getKey()));
+            }
         }
         return configuration;
     }
@@ -129,8 +143,16 @@ public class Configuration {
         return typeHandlerRegistry;
     }
 
+    public Map<Class<?>, MapperProxyFactory<?>> getKnownMappers() {
+        return knownMappers;
+    }
+
+    public InterceptorChain getInterceptorChain() {
+        return interceptorChain;
+    }
+
     //创建参数处理器
-    public ParameterHandler newParameterHandler( Object parameterObject, BoundSql boundSql) {
+    public ParameterHandler newParameterHandler(Object parameterObject, BoundSql boundSql) {
         //创建ParameterHandler
         ParameterHandler parameterHandler = new DefaultParameterHandler(parameterObject, boundSql);
         //插件在这里插入
@@ -141,8 +163,15 @@ public class Configuration {
     public ResultSetHandler newResultSetHandler(Executor executor, RowBounds rowBounds, ParameterHandler parameterHandler,
                                                 ResultProcessor resultHandler, BoundSql boundSql) {
         ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, parameterHandler, resultHandler, boundSql, rowBounds);
-        //插件在这里插入
         resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
         return resultSetHandler;
+    }
+
+    public MetaObject newMetaObject(Object parameterObject) {
+        return MetaObject.forObject(parameterObject, objectFactory, objectWrapperFactory);
+    }
+
+    public JdbcType getJdbcTypeForNull() {
+        return jdbcTypeForNull;
     }
 }

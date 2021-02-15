@@ -6,8 +6,8 @@ import com.qlu.cup.builder.yml.TokenHandler;
 import com.qlu.cup.mapper.SqlSource;
 import com.qlu.cup.statement.ParameterMapping;
 import com.qlu.cup.type.JdbcType;
-import reflection.MetaClass;
-import reflection.MetaObject;
+import com.qlu.cup.reflection.MetaClass;
+import com.qlu.cup.reflection.MetaObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,8 +92,6 @@ public class SqlSourceBuilder extends BaseBuilder {
                     builder.javaType(javaType);
                 } else if ("jdbcType".equals(name)) {
                     builder.jdbcType(resolveJdbcType(value));
-                } else if ("mode".equals(name)) {
-                    builder.mode(resolveParameterMode(value));
                 } else if ("numericScale".equals(name)) {
                     builder.numericScale(Integer.valueOf(value));
                 } else if ("resultMap".equals(name)) {
