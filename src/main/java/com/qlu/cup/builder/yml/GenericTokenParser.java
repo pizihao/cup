@@ -19,7 +19,7 @@ package com.qlu.cup.builder.yml;
  * @author Clinton Begin
  */
 /**
- * 普通记号解析器，处理#{}和${}参数
+ * 普通记号解析器，处理{}参数
  * 
  */
 public class GenericTokenParser {
@@ -45,11 +45,7 @@ public class GenericTokenParser {
       //#{favouriteSection,jdbcType=VARCHAR}
       //这里是循环解析参数，参考GenericTokenParserTest,比如可以解析${first_name} ${initial} ${last_name} reporting.这样的字符串,里面有3个 ${}
       while (start > -1) {
-    	  //判断一下 ${ 前面是否是反斜杠，这个逻辑在老版的mybatis中（如3.1.0）是没有的
         if (start > 0 && src[start - 1] == '\\') {
-          // the variable is escaped. remove the backslash.
-      	  //新版已经没有调用substring了，改为调用如下的offset方式，提高了效率
-          //issue #760
           builder.append(src, offset, start - offset - 1).append(openToken);
           offset = start + openToken.length();
         } else {

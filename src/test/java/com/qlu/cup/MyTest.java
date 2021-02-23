@@ -35,8 +35,8 @@ public class MyTest {
         CupUtil cupUtil = new CupUtil();
         SqlSession sqlSession = cupUtil.getSqlSession();
         UsersMapper mapper = sqlSession.getMapper(UsersMapper.class);
-//        List<Users> userList = mapper.getUserList();
-//        System.out.println(userList);
+        List<Users> userList = mapper.getUserList();
+        System.out.println(userList);
     }
 
     @Test

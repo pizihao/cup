@@ -6,7 +6,6 @@ import com.qlu.cup.result.ResultProcessor;
 import com.qlu.cup.session.RowBounds;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -14,6 +13,7 @@ import java.util.List;
 
 /**
  * 简单语句处理器(STATEMENT)
+ * 这个类是关键，这里必须把所有的语句和参数的映射和处理完全做好
  */
 public class SimpleStatementHandler extends BaseStatementHandler {
 

@@ -69,13 +69,13 @@ public class MapperMethod {
             result = null;
         } else if (Integer.class.equals(method.getReturnType()) || Integer.TYPE.equals(method.getReturnType())) {
             //如果返回值是大int或小int
-            result = Integer.valueOf(rowCount);
+            result = rowCount;
         } else if (Long.class.equals(method.getReturnType()) || Long.TYPE.equals(method.getReturnType())) {
             //如果返回值是大long或小long
-            result = Long.valueOf(rowCount);
+            result = (long) rowCount;
         } else if (Boolean.class.equals(method.getReturnType()) || Boolean.TYPE.equals(method.getReturnType())) {
             //如果返回值是大boolean或小boolean
-            result = Boolean.valueOf(rowCount > 0);
+            result = rowCount > 0;
         } else {
             throw new BindException("Mapper method '" + command.getName() + "' has an unsupported return type: " + method.getReturnType());
         }

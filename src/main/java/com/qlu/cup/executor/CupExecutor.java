@@ -1,6 +1,5 @@
 package com.qlu.cup.executor;
 
-import com.qlu.cup.bind.Configuration;
 import com.qlu.cup.context.Environment;
 import com.qlu.cup.logging.Log;
 import com.qlu.cup.mapper.BoundSql;

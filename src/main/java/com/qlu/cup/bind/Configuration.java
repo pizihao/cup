@@ -4,12 +4,11 @@ import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.builder.yml.YNode;
 import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.context.Environment;
+import com.qlu.cup.executor.CupExecutor;
 import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.*;
 import com.qlu.cup.reflection.factory.DefaultObjectFactory;
-import com.qlu.cup.result.DefaultResultSetHandler;
-import com.qlu.cup.result.ResultProcessor;
-import com.qlu.cup.result.ResultSetHandler;
+import com.qlu.cup.result.*;
 import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
@@ -21,8 +20,7 @@ import com.qlu.cup.reflection.factory.ObjectFactory;
 import com.qlu.cup.reflection.wrapper.DefaultObjectWrapperFactory;
 import com.qlu.cup.reflection.wrapper.ObjectWrapperFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @program: cup
@@ -47,6 +45,11 @@ public class Configuration {
     protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
     protected ObjectFactory objectFactory = new DefaultObjectFactory();
     protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
+    protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
+
+    protected boolean useColumnLabel = true;
+    protected boolean safeRowBoundsEnabled = false;
+    protected boolean safeResultHandlerEnabled = true;
 
     /**
      * @param type       接口
@@ -136,7 +139,7 @@ public class Configuration {
     }
 
     public Executor newExecutor(Transaction tx) {
-        return null;
+        return new CupExecutor(environment, tx);
     }
 
     public TypeHandlerRegistry getTypeHandlerRegistry() {
@@ -174,4 +177,32 @@ public class Configuration {
     public JdbcType getJdbcTypeForNull() {
         return jdbcTypeForNull;
     }
+
+    public boolean isUseColumnLabel() {
+        return useColumnLabel;
+    }
+
+    public ObjectFactory getObjectFactory() {
+        return objectFactory;
+    }
+
+    public boolean isSafeRowBoundsEnabled() {
+        return safeRowBoundsEnabled;
+    }
+
+    public boolean isSafeResultHandlerEnabled() {
+        return safeResultHandlerEnabled;
+    }
+
+    public boolean hasResultMap(String id) {
+        return resultMaps.containsKey(id);
+    }
+
+    public ResultMap getResultMap(String id) {
+        return resultMaps.get(id);
+    }
+    public void addResultMap(ResultMap rm) {
+        resultMaps.put(rm.getId(), rm);
+    }
+
 }

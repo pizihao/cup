@@ -81,7 +81,7 @@ public class SqlSessionFactoryBuilder {
                     .yNodeMap(mapper);
             Environment environment = environmentBuilder.build();
             //创建Configuration
-            return new Configuration(environment);
+            return Configuration.getConfiguration(environment);
         } catch (Exception e) {
             e.printStackTrace();
         }

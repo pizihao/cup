@@ -1,5 +1,7 @@
 package com.qlu.cup.result;
 
+import com.qlu.cup.reflection.factory.ObjectFactory;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,6 +14,10 @@ public class DefaultResultHandler implements ResultProcessor {
 
     public DefaultResultHandler() {
         list = new ArrayList<Object>();
+    }
+
+    public DefaultResultHandler(ObjectFactory objectFactory) {
+        list = objectFactory.create(List.class);
     }
 
     @Override
