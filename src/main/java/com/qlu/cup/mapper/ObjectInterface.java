@@ -86,6 +86,10 @@ public class ObjectInterface {
             case "String":
                 classToCreate = String.class;
                 break;
+            case "Object":
+            case "object":
+                classToCreate = Object.class;
+                break;
             default:
                 try {
                     classToCreate = Class.forName(str);
@@ -95,5 +99,72 @@ public class ObjectInterface {
                 break;
         }
         return classToCreate;
+    }
+
+    public static Class<?> sqlToJava(String sqlType) {
+        return getClazz(toSqlToJava(sqlType));
+    }
+
+    private static String toSqlToJava(String sqlType) {
+        if (sqlType == null || sqlType.trim().length() == 0) {
+            return "Object";
+        }
+        ;
+        sqlType = sqlType.toLowerCase();
+        switch (sqlType) {
+            case "nvarchar":
+                return "String";
+            case "char":
+                return "String";
+            case "varchar":
+                return "String";
+            case "text":
+                return "String";
+            case "nchar":
+                return "String";
+            case "integer":
+                return "Long";
+            case "tinyint":
+                return "Integer";
+            case "smallint":
+                return "Integer";
+            case "mediumint":
+                return "Integer";
+            case "bit":
+                return "Boolean";
+            case "bigint":
+                return "java.math.BigInteger";
+            case "float":
+                return "Fload";
+            case "double":
+                return "Double";
+            case "decimal":
+                return "java.math.BigDecimal";
+            case "boolean":
+                return "Boolean";
+            case "id":
+                return "Long";
+            case "date":
+                return "java.util.Date";
+            case "datetime":
+                return "java.util.Date";
+            case "year":
+                return "java.util.Date";
+            case "time":
+                return "java.sql.Time";
+            case "timestamp":
+                return "java.sql.Timestamp";
+            case "numeric":
+                return "java.math.BigDecimal";
+            case "real":
+                return "java.math.BigDecimal";
+            case "money":
+                return "Double";
+            case "smallmoney":
+                return "Double";
+            default:
+                break;
+        }
+        return sqlType;
     }
 }

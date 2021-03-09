@@ -1,6 +1,6 @@
 package com.qlu.cup.builder.yml;
 
-import com.qlu.cup.conf.YamlParser;
+import com.qlu.cup.builder.YamlParser;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

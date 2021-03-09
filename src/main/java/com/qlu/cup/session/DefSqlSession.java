@@ -2,18 +2,16 @@ package com.qlu.cup.session;
 
 import com.qlu.cup.bind.BindException;
 import com.qlu.cup.bind.Configuration;
-import com.qlu.cup.builder.yml.YNode;
-import com.qlu.cup.context.Environment;
-import com.qlu.cup.context.ErrorContext;
-import com.qlu.cup.exception.ExceptionFactory;
-import com.qlu.cup.exception.TooManyResultsException;
+import com.qlu.cup.bind.ErrorContext;
+import com.qlu.cup.exception.CupException;
 import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.BoundSql;
-import com.qlu.cup.result.ResultProcessor;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * @program: cup
@@ -41,62 +39,25 @@ public class DefSqlSession implements SqlSession {
     }
 
     @Override
-    public <T> T selectOne(String statement) {
-        return this.selectOne(statement, null);
-    }
-
-    @Override
-    public <T> T selectOne(String statement, Object parameter) {
+    public <T> T select(String statement, Object parameter) {
         // Popular vote was to return null on 0 results and throw exception on too many.
         List<T> list = this.selectList(statement, parameter);
         if (list.size() == 1) {
             return list.get(0);
         } else if (list.size() > 1) {
-            throw new TooManyResultsException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+            throw new CupException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
         } else {
             return null;
         }
     }
 
     @Override
-    public <E> List<E> selectList(String statement) {
-        return this.selectList(statement, null);
-    }
-
-    @Override
     public <E> List<E> selectList(String statement, Object parameter) {
-        return this.selectList(statement, parameter, RowBounds.DEFAULT);
-    }
-
-    @Override
-    public <E> List<E> selectList(String statement, Object parameter, RowBounds rowBounds) {
         try {
             BoundSql boundSql = configuration.getMappedYnode(statement);
-            return executor.query(boundSql, wrapCollection(parameter), rowBounds, Executor.NO_RESULT_HANDLER);
+            return executor.query(boundSql, wrapCollection(parameter));
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
-        } finally {
-            ErrorContext.instance().reset();
-        }
-    }
-
-    @Override
-    public void select(String statement, Object parameter, ResultProcessor handler) {
-        select(statement, parameter, RowBounds.DEFAULT, handler);
-    }
-
-    @Override
-    public void select(String statement, ResultProcessor handler) {
-        select(statement, null, RowBounds.DEFAULT, handler);
-    }
-
-    @Override
-    public void select(String statement, Object parameter, RowBounds rowBounds, ResultProcessor handler) {
-        try {
-            BoundSql boundSql = configuration.getMappedYnode(statement);
-            executor.query(boundSql, wrapCollection(parameter), rowBounds, handler);
-        } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error querying database.  Cause: " + e, e);
+            throw new SqlSessionException("Error querying database.  Cause: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -108,27 +69,18 @@ public class DefSqlSession implements SqlSession {
     }
 
     @Override
-    public int update(String statement) {
-        return update(statement, null);
-    }
-
-    @Override
     public int update(String statement, Object parameter) {
         try {
             dirty = true;
             BoundSql boundSql = configuration.getMappedYnode(statement);
             return executor.update(boundSql, wrapCollection(parameter));
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error updating database.  Cause: " + e, e);
+            throw new SqlSessionException("Error updating database.  Cause: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
     }
 
-    @Override
-    public int delete(String statement) {
-        return update(statement, null);
-    }
 
     @Override
     public int delete(String statement, Object parameter) {
@@ -137,16 +89,11 @@ public class DefSqlSession implements SqlSession {
 
     @Override
     public void commit() {
-        commit(false);
-    }
-
-    @Override
-    public void commit(boolean force) {
         try {
-            executor.commit(isCommitOrRollbackRequired(force));
+            executor.commit(isCommitOrRollbackRequired(false));
             dirty = false;
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error committing transaction.  Cause: " + e, e);
+            throw new SqlSessionException("Error committing transaction.  Cause: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -154,16 +101,11 @@ public class DefSqlSession implements SqlSession {
 
     @Override
     public void rollback() {
-        rollback(false);
-    }
-
-    @Override
-    public void rollback(boolean force) {
         try {
-            executor.rollback(isCommitOrRollbackRequired(force));
+            executor.rollback(isCommitOrRollbackRequired(false));
             dirty = false;
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error rolling back transaction.  Cause: " + e, e);
+            throw new SqlSessionException("Error rolling back transaction.  Cause: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -194,19 +136,13 @@ public class DefSqlSession implements SqlSession {
         try {
             return executor.getTransaction().getConnection();
         } catch (SQLException e) {
-            throw ExceptionFactory.wrapException("Error getting a new connection.  Cause: " + e, e);
+            throw new SqlSessionException("Error getting a new connection.  Cause: " + e, e);
         }
-    }
-
-    @Override
-    public void clearCache() {
-//        executor.clearLocalCache();
     }
 
     private boolean isCommitOrRollbackRequired(boolean force) {
         return (!autoCommit && dirty) || force;
     }
-
     private Object wrapCollection(final Object object) {
         if (object instanceof Collection) {
             StrictMap<Object> map = new StrictMap<>();

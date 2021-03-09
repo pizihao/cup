@@ -6,7 +6,6 @@ package com.qlu.cup.logging;
  */
 public interface Log {
 
-    //和一般的log4j很像，提供日志接口的一些方法,error, debug, warn。
     boolean isDebugEnabled();
 
     boolean isTraceEnabled();

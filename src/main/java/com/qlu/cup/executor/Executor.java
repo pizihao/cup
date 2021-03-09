@@ -1,11 +1,9 @@
 package com.qlu.cup.executor;
 
-import com.qlu.cup.builder.yml.YNode;
 import com.qlu.cup.mapper.BoundSql;
-import com.qlu.cup.result.ResultProcessor;
-import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.transaction.Transaction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -17,8 +15,6 @@ import java.util.List;
  **/
 public interface Executor {
 
-    ResultProcessor NO_RESULT_HANDLER = null;
-
     /**
      * 更新
      */
@@ -27,7 +23,7 @@ public interface Executor {
     /**
      * 查询，带分页
      */
-    <E> List<E> query(BoundSql boundSql, Object parameter, RowBounds rowBounds, ResultProcessor ResultProcessor) throws SQLException;
+    <E> List<E> query(BoundSql boundSql, Object parameter) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException;
 
     /**
      * 提交，参数是是否要强制

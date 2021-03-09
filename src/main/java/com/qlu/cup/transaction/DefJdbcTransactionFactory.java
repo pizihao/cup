@@ -22,7 +22,7 @@ public class DefJdbcTransactionFactory implements TransactionFactory {
     }
 
     @Override
-    public Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level, boolean autoCommit) {
-        return new DefJdbcTransaction(dataSource, level, autoCommit);
+    public Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level) {
+        return new DefJdbcTransaction(dataSource, level);
     }
 }

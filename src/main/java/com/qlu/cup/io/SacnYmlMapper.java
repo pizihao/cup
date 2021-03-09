@@ -1,11 +1,9 @@
 package com.qlu.cup.io;
 
-import java.io.File;
-
-import com.qlu.cup.logging.Log;
-import com.qlu.cup.logging.LogFactory;
+import com.qlu.cup.exception.CupException;
 import org.springframework.util.ResourceUtils;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
@@ -17,7 +15,6 @@ import java.util.List;
  **/
 public class SacnYmlMapper {
 
-    private static final Log logger = LogFactory.getLog(SacnYmlMapper.class);
     /**
      * 递归查找文件
      * @param baseDirName    查找的文件夹路径
@@ -27,7 +24,7 @@ public class SacnYmlMapper {
     public static void findFiles(String baseDirName, String targetFileName, List<File> fileList) throws FileNotFoundException {
         File baseDir = ResourceUtils.getFile(baseDirName);
         if (!baseDir.exists() || !baseDir.isDirectory()) {
-            logger.debug("文件查找失败：" + baseDirName + "不是一个目录！");
+            throw new CupException("文件查找失败：" + baseDirName + "不是一个目录！");
         }
         String tempName = null;
         //判断目录是否存在

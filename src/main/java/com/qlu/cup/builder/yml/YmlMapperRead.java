@@ -1,13 +1,16 @@
 package com.qlu.cup.builder.yml;
 
+import com.qlu.cup.bind.Configuration;
 import com.qlu.cup.io.SacnYmlMapper;
+import com.qlu.cup.mapper.BoundSql;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @program: cup
@@ -24,21 +27,21 @@ public class YmlMapperRead {
      * @author liuwenaho
      * @date 2021/1/29 20:20
      */
-    public static Map<Class<?>, YNode> getMapper(String mapperPath) {
+    public static void getMapper(String mapperPath, Configuration configuration) {
         String path = mapperPath.substring(0, mapperPath.lastIndexOf("*"));
         String yml = mapperPath.substring(mapperPath.lastIndexOf("*"));
         List<File> ymlList = new ArrayList<>();
-        Map<Class<?>, YNode> nodeMap = new HashMap<>(16);
+        Map<String, BoundSql> sqlMap = new HashMap<>(16);
         try {
             SacnYmlMapper.findFiles(path, yml, ymlList);
             for (File file : ymlList) {
                 InputStream inputStream = new FileInputStream(file);
-                nodeMap.putAll(new YmlMapperBuilder().builder(inputStream));
+                sqlMap.putAll(new YmlMapperBuilder().builder(inputStream,configuration));
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        return nodeMap;
+        configuration.setSqlMap(sqlMap);
     }
 
     /**

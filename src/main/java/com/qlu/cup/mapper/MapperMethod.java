@@ -2,13 +2,12 @@ package com.qlu.cup.mapper;
 
 import com.qlu.cup.bind.BindException;
 import com.qlu.cup.bind.Configuration;
-import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.util.PartsUtil;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.List;
 
 /**
  * 映射器方法
@@ -17,48 +16,44 @@ public class MapperMethod {
 
     private final SqlCommand command;
     private final MethodSignature method;
+    private final Configuration configuration;
 
     public MapperMethod(Class<?> mapperInterface, Method method, Configuration config) {
         this.command = new SqlCommand(config, mapperInterface, method);
-        this.method = new MethodSignature(config, method);
+        this.method = new MethodSignature(method);
+        this.configuration = config;
     }
 
     //执行
-    public Object execute(SqlSession sqlSession, Object[] args) {
-        Object result;
-        //可以看到执行时就是4种情况，insert|update|delete|select，分别调用SqlSession的4大类方法
+    public Object execute(SqlSession sqlSession, Object[] args) throws IllegalAccessException {
+        Object result = null;
+        //如果有参数的话处理参数
         if (PartsUtil.INSERT.equals(command.getType())) {
-            Object param = method.convertArgsToSqlCommandParam(args);
+            Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
             result = rowCountResult(sqlSession.insert(command.getName(), param));
         } else if (PartsUtil.UPDATE.equals(command.getType())) {
-            Object param = method.convertArgsToSqlCommandParam(args);
+            Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
             result = rowCountResult(sqlSession.update(command.getName(), param));
         } else if (PartsUtil.DELETE.equals(command.getType())) {
-            Object param = method.convertArgsToSqlCommandParam(args);
+            Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
             result = rowCountResult(sqlSession.delete(command.getName(), param));
         } else if (PartsUtil.SELECT.equals(command.getType())) {
-            if (method.returnsVoid() && method.hasResultHandler()) {
-                //如果有结果处理器
-                executeWithResultHandler(sqlSession, args);
-                result = null;
-            } else if (method.returnsMany()) {
+            if (method.returnsMany()) {
                 //如果结果有多条记录
                 result = executeForMany(sqlSession, args);
-            } else if (method.returnsMap()) {
-                //如果结果是map
-                throw new BindException("不支持的返回类型");
             } else {
                 //否则就是一条记录
-                Object param = method.convertArgsToSqlCommandParam(args);
-                result = sqlSession.selectOne(command.getName(), param);
+                Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
+                result = sqlSession.select(command.getName(), param);
             }
         } else {
-            throw new BindException("Unknown execution method for: " + command.getName());
+            throw new BindException("未知的执行方法: " + command.getName());
         }
         if (result == null && method.getReturnType().isPrimitive() && !method.returnsVoid()) {
-            throw new BindException("Mapper method '" + command.getName()
-                    + " attempted to return null from a method with a primitive return type (" + method.getReturnType() + ").");
+            throw new BindException("映射方法 '" + command.getName()
+                    + " 试图从具有原始返回类型的方法返回null (" + method.getReturnType() + ").");
         }
+
         return result;
     }
 
@@ -83,32 +78,21 @@ public class MapperMethod {
     }
 
     //结果处理器
-    private void executeWithResultHandler(SqlSession sqlSession, Object[] args) {
+    private void executeWithResultHandler(SqlSession sqlSession, Object[] args) throws IllegalAccessException {
         BoundSql ms = sqlSession.getConfiguration().getSqlMap().get(command.getName());
         if (void.class.equals(ms.getResultType())) {
             throw new BindException("method " + command.getName()
                     + " needs resultType attribute in YML so a ResultProcessor can be used as a parameter.");
         }
-        Object param = method.convertArgsToSqlCommandParam(args);
-        if (method.hasRowBounds()) {
-            RowBounds rowBounds = method.extractRowBounds(args);
-            sqlSession.select(command.getName(), param, rowBounds, method.extractResultHandler(args));
-        } else {
-            sqlSession.select(command.getName(), param, method.extractResultHandler(args));
-        }
+        Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
+        sqlSession.select(command.getName(), param);
     }
 
     //多条记录
-    private <E> Object executeForMany(SqlSession sqlSession, Object[] args) {
-        List<E> result;
-        Object param = method.convertArgsToSqlCommandParam(args);
-        //代入RowBounds
-        if (method.hasRowBounds()) {
-            RowBounds rowBounds = method.extractRowBounds(args);
-            result = sqlSession.<E>selectList(command.getName(), param, rowBounds);
-        } else {
-            result = sqlSession.<E>selectList(command.getName(), param);
-        }
+    private <E> Object executeForMany(SqlSession sqlSession, Object[] args) throws IllegalAccessException {
+        List<E> result = null;
+        Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
+        result = sqlSession.<E>selectList(command.getName(), param);
         if (!method.getReturnType().isAssignableFrom(result.getClass())) {
             if (method.getReturnType().isArray()) {
                 return convertToArray(result);

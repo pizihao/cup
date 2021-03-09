@@ -1,7 +1,6 @@
 package com.qlu.cup.mapper;
 
 import com.qlu.cup.session.SqlSession;
-import com.qlu.cup.util.ExceptionUtil;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
@@ -32,7 +31,6 @@ public class MapperProxy<T> implements InvocationHandler, Serializable {
             try {
                 return method.invoke(this, args);
             } catch (Throwable t) {
-                throw ExceptionUtil.unwrapThrowable(t);
             }
         }
         //这里优化了，去缓存中找MapperMethod

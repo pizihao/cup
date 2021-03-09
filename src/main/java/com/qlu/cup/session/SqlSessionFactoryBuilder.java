@@ -1,14 +1,12 @@
 package com.qlu.cup.session;
 
 import com.qlu.cup.bind.Configuration;
-import com.qlu.cup.builder.yml.YNode;
+import com.qlu.cup.bind.Environment;
+import com.qlu.cup.bind.ErrorContext;
+import com.qlu.cup.builder.InputConf;
 import com.qlu.cup.builder.yml.YmlMapperRead;
-import com.qlu.cup.conf.InputConf;
-import com.qlu.cup.context.Environment;
-import com.qlu.cup.context.ErrorContext;
 import com.qlu.cup.datasource.DataSourceFactory;
 import com.qlu.cup.datasource.DefDataSourceFactory;
-import com.qlu.cup.exception.ExceptionFactory;
 import com.qlu.cup.transaction.DefJdbcTransactionFactory;
 import com.qlu.cup.transaction.TransactionFactory;
 import com.qlu.cup.util.PartsUtil;
@@ -17,7 +15,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -33,7 +30,7 @@ public class SqlSessionFactoryBuilder {
             Properties properties = InputConf.getProperties(reader);
             return build(txAndDs(properties));
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+            throw new SqlSessionException("Error building SqlSession.", e);
         } finally {
             ErrorContext.instance().reset();
             try {
@@ -49,7 +46,7 @@ public class SqlSessionFactoryBuilder {
             Properties properties = InputConf.getProperties(inputStream);
             return build(txAndDs(properties));
         } catch (Exception e) {
-            throw ExceptionFactory.wrapException("Error building SqlSession.", e);
+            throw new SqlSessionException("Error building SqlSession.", e);
         } finally {
             ErrorContext.instance().reset();
             try {
@@ -72,16 +69,16 @@ public class SqlSessionFactoryBuilder {
             dsFactory.setProperties(properties);
             DataSource dataSource = dsFactory.getDataSource();
             String mapperPath = properties.getProperty(PartsUtil.MAPPER_PATH_NAME);
-            //按照mapperPath路径，读取全部的映射文件，放入环境中
-            Map<Class<?>, YNode> mapper = YmlMapperRead.getMapper(mapperPath);
             Environment.Builder environmentBuilder = new Environment.Builder(properties.getProperty(PartsUtil.ENVIRONMENT))
                     .transactionFactory(txFactory)
                     .dataSource(dataSource)
-                    .mapperPath(mapperPath)
-                    .yNodeMap(mapper);
+                    .mapperPath(mapperPath);
             Environment environment = environmentBuilder.build();
             //创建Configuration
-            return Configuration.getConfiguration(environment);
+            Configuration configuration = new Configuration(environment);
+            //按照mapperPath路径，读取全部的映射文件，放入环境中
+            YmlMapperRead.getMapper(mapperPath,configuration);
+            return configuration;
         } catch (Exception e) {
             e.printStackTrace();
         }

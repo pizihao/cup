@@ -1,55 +1,38 @@
 package com.qlu.cup.bind;
 
 import com.qlu.cup.builder.yml.MapperException;
-import com.qlu.cup.builder.yml.YNode;
-import com.qlu.cup.builder.yml.YmlMapperRead;
-import com.qlu.cup.context.Environment;
 import com.qlu.cup.executor.CupExecutor;
 import com.qlu.cup.executor.Executor;
-import com.qlu.cup.mapper.*;
-import com.qlu.cup.reflection.factory.DefaultObjectFactory;
-import com.qlu.cup.result.*;
-import com.qlu.cup.session.RowBounds;
+import com.qlu.cup.mapper.BoundSql;
+import com.qlu.cup.mapper.MapperProxyFactory;
+import com.qlu.cup.result.ResultType;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
-import com.qlu.cup.type.JdbcType;
-import com.qlu.cup.type.TypeHandlerRegistry;
-import com.qlu.cup.util.InterceptorChain;
-import com.qlu.cup.reflection.MetaObject;
-import com.qlu.cup.reflection.factory.ObjectFactory;
-import com.qlu.cup.reflection.wrapper.DefaultObjectWrapperFactory;
-import com.qlu.cup.reflection.wrapper.ObjectWrapperFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @program: cup
- * @description: 通过配置文件实现接口和映射文件的绑定，产出一个sqlSession
+ * @description: 全局配置信息
  * @author: liuwenhao
- * @create: 2021-01-28 11:44
+ * @create: 2021-03-03 13:16
  **/
 public class Configuration {
-
     private static Configuration configuration;
 
     protected Environment environment;
 
-    private TypeHandlerRegistry typeHandlerRegistry;
-
+    /**
+     * key为命名空间+接口方法名
+     **/
     protected static Map<String, BoundSql> sqlMap = new HashMap<>(16);
+    /**
+     * key为命名空间+接口方法名
+     **/
+    protected static Map<String, ResultType> resultMap = new HashMap<>(16);
 
     private static Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
-
-    protected final InterceptorChain interceptorChain;
-
-    protected JdbcType jdbcTypeForNull = JdbcType.OTHER;
-    protected ObjectFactory objectFactory = new DefaultObjectFactory();
-    protected ObjectWrapperFactory objectWrapperFactory = new DefaultObjectWrapperFactory();
-    protected final Map<String, ResultMap> resultMaps = new StrictMap<ResultMap>("Result Maps collection");
-
-    protected boolean useColumnLabel = true;
-    protected boolean safeRowBoundsEnabled = false;
-    protected boolean safeResultHandlerEnabled = true;
 
     /**
      * @param type       接口
@@ -60,7 +43,7 @@ public class Configuration {
      * @date 2021/1/28 14:07
      */
     public <T> T getMapper(Class<T> type, SqlSession sqlSession) {
-        if (!environment.getyNodeMap().containsKey(type)) {
+        if (!getSqlMap(type)) {
             throw new MapperException("找不到映射信息" + type);
         }
         final MapperProxyFactory<T> mapperProxyFactory = (MapperProxyFactory<T>) knownMappers.get(type);
@@ -104,105 +87,57 @@ public class Configuration {
 
     public Configuration(Environment environment) {
         this.environment = environment;
-        this.typeHandlerRegistry = new TypeHandlerRegistry();
-        this.interceptorChain = new InterceptorChain();
     }
 
     public static Configuration getConfiguration(Environment environment) {
         if (configuration == null) {
             configuration = new Configuration(environment);
         }
-        if (configuration.getSqlMap().isEmpty() && configuration.getKnownMappers().isEmpty()) {
-            for (Map.Entry<Class<?>, YNode> entry : environment.getyNodeMap().entrySet()) {
-                if (YmlMapperRead.checkOverload(entry.getKey())) {
-                    throw new BindException("禁止在" + entry.getKey() + "中出现方法重载");
-                }
-                sqlMap.putAll(BoundSqlBuilder.builder(entry.getValue().getNode(), configuration));
-                knownMappers.put(entry.getKey(), new MapperProxyFactory<>(entry.getKey()));
-            }
-        }
         return configuration;
     }
-
     public Map<String, BoundSql> getSqlMap() {
         return sqlMap;
     }
-
-    public boolean hasNode(String nameSpace, String statementName) {
-        boolean hasNode = false;
-        try {
-            hasNode = environment.hasNode(Class.forName(nameSpace), statementName);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+    public boolean getSqlMap(Class<?> type) {
+        for (Map.Entry<String, BoundSql> entry : sqlMap.entrySet()) {
+            if (entry.getValue().getNamespace().equals(type.getName())){
+                return true;
+            }
         }
-        return hasNode;
+        return false;
     }
 
+    public boolean hasNode(String statementName) {
+        return sqlMap.containsKey(statementName);
+    }
+
+    /**
+     * 创建一个执行器并返回
+     **/
     public Executor newExecutor(Transaction tx) {
         return new CupExecutor(environment, tx);
     }
 
-    public TypeHandlerRegistry getTypeHandlerRegistry() {
-        return typeHandlerRegistry;
+    public Configuration setSqlMap(Map<String, BoundSql> sqlMap) {
+        Configuration.sqlMap = sqlMap;
+        return this;
+    }
+
+    public Map<String, ResultType> getResultMap() {
+        return resultMap;
+    }
+
+    public Configuration setResultMap(String name, ResultType resultMap) {
+        Configuration.resultMap.put(name, resultMap);
+        return this;
     }
 
     public Map<Class<?>, MapperProxyFactory<?>> getKnownMappers() {
         return knownMappers;
     }
 
-    public InterceptorChain getInterceptorChain() {
-        return interceptorChain;
+    public Configuration setKnownMappers(Class<?> clazz, MapperProxyFactory knownMappers) {
+        Configuration.knownMappers.put(clazz,knownMappers);
+        return this;
     }
-
-    //创建参数处理器
-    public ParameterHandler newParameterHandler(Object parameterObject, BoundSql boundSql) {
-        //创建ParameterHandler
-        ParameterHandler parameterHandler = new DefaultParameterHandler(parameterObject, boundSql);
-        //插件在这里插入
-        parameterHandler = (ParameterHandler) interceptorChain.pluginAll(parameterHandler);
-        return parameterHandler;
-    }
-
-    public ResultSetHandler newResultSetHandler(Executor executor, RowBounds rowBounds, ParameterHandler parameterHandler,
-                                                ResultProcessor resultHandler, BoundSql boundSql) {
-        ResultSetHandler resultSetHandler = new DefaultResultSetHandler(executor, parameterHandler, resultHandler, boundSql, rowBounds);
-        resultSetHandler = (ResultSetHandler) interceptorChain.pluginAll(resultSetHandler);
-        return resultSetHandler;
-    }
-
-    public MetaObject newMetaObject(Object parameterObject) {
-        return MetaObject.forObject(parameterObject, objectFactory, objectWrapperFactory);
-    }
-
-    public JdbcType getJdbcTypeForNull() {
-        return jdbcTypeForNull;
-    }
-
-    public boolean isUseColumnLabel() {
-        return useColumnLabel;
-    }
-
-    public ObjectFactory getObjectFactory() {
-        return objectFactory;
-    }
-
-    public boolean isSafeRowBoundsEnabled() {
-        return safeRowBoundsEnabled;
-    }
-
-    public boolean isSafeResultHandlerEnabled() {
-        return safeResultHandlerEnabled;
-    }
-
-    public boolean hasResultMap(String id) {
-        return resultMaps.containsKey(id);
-    }
-
-    public ResultMap getResultMap(String id) {
-        return resultMaps.get(id);
-    }
-    public void addResultMap(ResultMap rm) {
-        resultMaps.put(rm.getId(), rm);
-    }
-
 }

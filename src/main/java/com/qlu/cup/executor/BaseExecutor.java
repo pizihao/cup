@@ -1,16 +1,11 @@
 package com.qlu.cup.executor;
 
-import com.qlu.cup.bind.Configuration;
-import com.qlu.cup.context.Environment;
-import com.qlu.cup.context.ErrorContext;
-import com.qlu.cup.logging.Log;
-import com.qlu.cup.logging.LogFactory;
-import com.qlu.cup.logging.jdbc.ConnectionLogger;
+import com.qlu.cup.bind.Environment;
+import com.qlu.cup.bind.ErrorContext;
 import com.qlu.cup.mapper.BoundSql;
-import com.qlu.cup.result.ResultProcessor;
-import com.qlu.cup.session.RowBounds;
 import com.qlu.cup.transaction.Transaction;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -21,7 +16,6 @@ import java.util.List;
  */
 public abstract class BaseExecutor implements Executor {
 
-    private static final Log log = LogFactory.getLog(BaseExecutor.class);
 
     protected Transaction transaction;
     protected Executor wrapper;
@@ -59,7 +53,6 @@ public abstract class BaseExecutor implements Executor {
             }
         } catch (SQLException e) {
             // Ignore.  There's nothing that can be done at this point.
-            log.warn("Unexpected exception on closing transaction.  Cause: " + e);
         } finally {
             transaction = null;
             closed = true;
@@ -74,7 +67,7 @@ public abstract class BaseExecutor implements Executor {
     //SqlSession.update/insert/delete会调用此方法
     @Override
     public int update(BoundSql boundSql, Object parameter) throws SQLException {
-        ErrorContext.instance().resource(boundSql.getHandle()).activity("executing an update").object(boundSql.getID());
+        ErrorContext.instance().resource(boundSql.getHandle()).activity("executing an update").object(boundSql.getNameId());
         if (closed) {
             throw new ExecutorException("Executor was closed.");
         }
@@ -82,15 +75,9 @@ public abstract class BaseExecutor implements Executor {
         return doUpdate(boundSql, parameter);
     }
 
-    //SqlSession.selectList会调用此方法
     @Override
-    public <E> List<E> query(BoundSql boundSql, Object parameter, RowBounds rowBounds, ResultProcessor resultHandler) throws SQLException {
-        //查询
-        return query(parameter, rowBounds, resultHandler, boundSql);
-    }
-
-    public <E> List<E> query(Object parameter, RowBounds rowBounds, ResultProcessor resultHandler, BoundSql boundSql) throws SQLException {
-        ErrorContext.instance().resource(boundSql.getHandle()).activity("executing a query").object(boundSql.getID());
+    public <E> List<E> query(BoundSql boundSql, Object parameter) throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException {
+        ErrorContext.instance().resource(boundSql.getHandle()).activity("executing a query").object(boundSql.getNameId());
         //如果已经关闭，报错
         if (closed) {
             throw new ExecutorException("Executor was closed.");
@@ -99,7 +86,7 @@ public abstract class BaseExecutor implements Executor {
         try {
             //加一,这样递归调用到上面的时候就不会再清局部缓存了
             queryStack++;
-            list = queryFromDatabase(parameter, rowBounds, resultHandler, boundSql);
+            list = queryFromDatabase(parameter, boundSql);
         } finally {
             //清空堆栈
             queryStack--;
@@ -130,8 +117,8 @@ public abstract class BaseExecutor implements Executor {
             throws SQLException;
 
     //query-->queryFromDatabase-->doQuery
-    protected abstract <E> List<E> doQuery(Object parameter, RowBounds rowBounds, ResultProcessor resultHandler, BoundSql boundSql)
-            throws SQLException;
+    protected abstract <E> List<E> doQuery(Object parameter, BoundSql boundSql)
+            throws SQLException, ClassNotFoundException, InstantiationException, IllegalAccessException, InvocationTargetException;
 
     protected void closeStatement(Statement statement) {
         if (statement != null) {
@@ -145,17 +132,12 @@ public abstract class BaseExecutor implements Executor {
 
 
     //从数据库查
-    private <E> List<E> queryFromDatabase(Object parameter, RowBounds rowBounds, ResultProcessor processor, BoundSql boundSql) throws SQLException {
-        return doQuery(parameter, rowBounds, processor, boundSql);
+    private <E> List<E> queryFromDatabase(Object parameter, BoundSql boundSql) throws SQLException, ClassNotFoundException, InvocationTargetException, InstantiationException, IllegalAccessException {
+        return doQuery(parameter, boundSql);
     }
 
-    protected Connection getConnection(Log statementLog) throws SQLException {
-        Connection connection = transaction.getConnection();
-        if (statementLog.isDebugEnabled()) {
-            return ConnectionLogger.newInstance(connection, statementLog, queryStack);
-        } else {
-            return connection;
-        }
+    protected Connection getConnection() throws SQLException {
+        return transaction.getConnection();
     }
 
     @Override

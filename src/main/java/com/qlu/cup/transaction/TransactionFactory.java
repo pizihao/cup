@@ -20,6 +20,6 @@ public interface TransactionFactory {
     Transaction newTransaction(Connection conn);
 
     //根据数据源和事务隔离级别创建Transaction
-    Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level, boolean autoCommit);
+    Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level);
 
 }
