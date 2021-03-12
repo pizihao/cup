@@ -56,6 +56,16 @@ public class SqlSessionFactoryBuilder {
         }
     }
 
+    public SqlSessionFactory build(Properties properties) {
+        try {
+            return build(txAndDs(properties));
+        } catch (Exception e) {
+            throw new SqlSessionException("Error building SqlSession.", e);
+        } finally {
+            ErrorContext.instance().reset();
+        }
+    }
+
     /**
      * 用于创建事务管理器和数据源，并存储在环境中
      */
