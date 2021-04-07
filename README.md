@@ -105,7 +105,7 @@ cup还需要知道结果映射信息，所以这里还需要我们定制的Bound
 
 cup认为只有拿到实体类属性的set方法，我才可以对这个属性进行赋值，这个方法的规范是：针对xxx属性需要方法为`setXxx(Class xxx);`，如果没有这个方法，即使存在这个属性也会因为是私有的属性无法进行赋值
 
-cup会优先去寻找set方法，如果成功就会直接赋值，失败了才会针队这个属性赋值，如果这个属性是`public`的话才会被cup赋值成功
+cup会优先去寻找set方法，如果成功就会直接赋值，失败了才会针队这个属性赋值，如果这个属性是`public`的话才会被cup赋值成功，当然cup并不建议把实体类中的属性设置为 `public`，这样并不安全
 
 ### 八，参数处理
 
@@ -116,4 +116,43 @@ cup进行参数处理的目的是把参数和SQL进行绑定
 cup要求接口方法中的参数名和在yml文件中使用的相同
 
 cup 不会映射static修饰的属性，如果一个类中存在static修饰的属性，cup会自动忽略这个属性，这个属性不应该属于某一个实例属性，而是应该属于这个类对象，cup无权对类对象进行过多的访问
+
+在获取参数的时候cup希望获取的开发者自己写入的参数名，而不是jvm编译后自动生成的诸如var1，var2之类的参数，所以需要对pom.xml中的信息进行修改：
+
+当我们使用maven的时候通常会在pom中写入这样的信息：
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+```
+
+这是idea自动帮开发人员引入的插件，可以通过这个插件把项目工程进行打包，这个结果可能是jar文件，也有可能是war文件，现在再使用cup的时候希望开发人员可以扩展这个配置：
+
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+                <source>8</source>
+                <target>8</target>
+                <compilerArgs>
+                    <arg>-parameters</arg>
+                </compilerArgs>
+            </configuration>
+        </plugin>
+    </plugins>
+</build>
+```
+
+其中最重要的是 `compilerArgs` 这个标签，`-parameters`  属性代表着jvm在编译的时候的编译结果，比如接口方法 `Users getUserById(Integer id);` 这个的编译结果是 `Users getUserById(Integer var1);`，这里的参数名应该是id，但是却被编译成了var1,。
+
+cup不会根据参数对应的位置去设置值，所以如果出现这种情况，cup会赋值失败，甚至会出现错误。
 
