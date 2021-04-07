@@ -60,11 +60,11 @@ public abstract class BaseStatementHandler implements StatementHandler {
     protected abstract Statement instantiateStatement(Connection connection) throws SQLException;
 
     protected void setStatementTimeout(Statement stmt) throws SQLException {
-        stmt.setQueryTimeout(PartsUtil.timeout);
+        stmt.setQueryTimeout(PartsUtil.TIMEOUT);
     }
 
     protected void setFetchSize(Statement stmt) throws SQLException {
-        stmt.setFetchSize(PartsUtil.fetchSize);
+        stmt.setFetchSize(PartsUtil.FETCH_SIZE);
     }
 
     //关闭语句

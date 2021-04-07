@@ -156,7 +156,7 @@ public class ReflectUtil {
     public static Map<String, String> mapStringToMap(String str) {
         str = str.substring(1, str.length() - 1);
         String[] strs = str.split(",");
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>(16);
         for (String string : strs) {
             String key = string.split("=")[0].trim();
             String value = string.split("=")[1];

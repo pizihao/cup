@@ -23,7 +23,7 @@ public class YamlParser {
      */
     public static Map<String, Object> yamlToFlattenedMap(String yamlContent) {
         Yaml yaml = createYaml();
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>(16);
         for (Object object : yaml.loadAll(yamlContent)) {
             if (object != null) {
                 map = asMap(object);

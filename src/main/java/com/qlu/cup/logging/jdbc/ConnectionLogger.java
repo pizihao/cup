@@ -29,26 +29,23 @@ public final class ConnectionLogger extends BaseJdbcLogger implements Invocation
             if (Object.class.equals(method.getDeclaringClass())) {
                 return method.invoke(this, params);
             }
-            if ("prepareStatement".equals(method.getName())) {
-                if (isDebugEnabled()) {
-                    debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
+            switch (method.getName()) {
+                case "prepareStatement":
+                case "prepareCall": {
+                    if (isDebugEnabled()) {
+                        debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
+                    }
+                    PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
+                    stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
+                    return stmt;
                 }
-                PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
-                stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
-                return stmt;
-            } else if ("prepareCall".equals(method.getName())) {
-                if (isDebugEnabled()) {
-                    debug(" Preparing: " + removeBreakingWhitespace((String) params[0]), true);
+                case "createStatement": {
+                    Statement stmt = (Statement) method.invoke(connection, params);
+                    stmt = StatementLogger.newInstance(stmt, statementLog, queryStack);
+                    return stmt;
                 }
-                PreparedStatement stmt = (PreparedStatement) method.invoke(connection, params);
-                stmt = PreparedStatementLogger.newInstance(stmt, statementLog, queryStack);
-                return stmt;
-            } else if ("createStatement".equals(method.getName())) {
-                Statement stmt = (Statement) method.invoke(connection, params);
-                stmt = StatementLogger.newInstance(stmt, statementLog, queryStack);
-                return stmt;
-            } else {
-                return method.invoke(connection, params);
+                default:
+                    return method.invoke(connection, params);
             }
         } catch (Throwable t) {
             throw ExceptionUtil.unwrapThrowable(t);

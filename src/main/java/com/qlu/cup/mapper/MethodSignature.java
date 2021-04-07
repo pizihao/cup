@@ -64,7 +64,7 @@ public class MethodSignature {
                     }
                 }
             }
-            final Map<String, Object> param = new HashMap<>();
+            final Map<String, Object> param = new HashMap<>(16);
             //循环，参数中有的才放入，没有的使用初始值
             for (Map.Entry<Integer, String> entry : params.entrySet()) {
                 if (argsMap.get(entry.getValue()) != null) {

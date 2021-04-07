@@ -20,7 +20,7 @@ public class GenericTokenParser {
     }
 
     public Map<String, Integer> parse(String text, BoundSql boundSql) {
-        Map<String, Integer> integerMap = new HashMap<>();
+        Map<String, Integer> integerMap = new HashMap<>(16);
         int intrger = 0;
         StringBuilder builder = new StringBuilder();
         if (text != null && text.length() > 0) {

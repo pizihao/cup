@@ -111,8 +111,8 @@ public class YmlMapperBuilder {
             //只拿取public方法，出于是接口的考虑
             Method[] aClassMethods = aClass.getMethods();
             for (Method aClassMethod : aClassMethods) {
-                Map<String, ParameterMapping> parameterMap = new HashMap<>();
-                Map<String, ResultMapping> resultMap = new HashMap<>();
+                Map<String, ParameterMapping> parameterMap = new HashMap<>(16);
+                Map<String, ResultMapping> resultMap = new HashMap<>(16);
                 if (aClassMethod.getName().equals(entry.getKey())) {
                     //获取方法的参数
                     Parameter[] parameters = aClassMethod.getParameters();
@@ -211,7 +211,7 @@ public class YmlMapperBuilder {
     }
 
     public static Map<String, Integer> getParameterIndex(String sql,BoundSql boundSql) {
-        //获取 ${ 和 } 中的信息
+        //获取 ${ 和 } 中间的信息
         GenericTokenParser parser = new GenericTokenParser("${","}");
         return parser.parse(sql,boundSql);
     }
