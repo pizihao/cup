@@ -7,7 +7,7 @@ import com.qlu.cup.logging.Log;
  */
 public class NoLoggingImpl implements Log {
 
-    public NoLoggingImpl(String clazz) {
+    public NoLoggingImpl(Class<?> clazz) {
         // Do Nothing
     }
 
@@ -43,6 +43,11 @@ public class NoLoggingImpl implements Log {
 
     @Override
     public void warn(String s) {
+        // Do Nothing
+    }
+
+    @Override
+    public void info(String s) {
         // Do Nothing
     }
 

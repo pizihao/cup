@@ -1,20 +1,19 @@
 package com.qlu.cup.logging.log4j;
 
-import com.qlu.cup.logging.Log;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * 用的log4j里的Logger
  */
-public class Log4jImpl implements Log {
+public class Log4jImpl implements com.qlu.cup.logging.Log {
 
     private static final String FQCN = Log4jImpl.class.getName();
 
-    private Logger log;
+    private Log log;
 
-    public Log4jImpl(String clazz) {
-        log = Logger.getLogger(clazz);
+    public Log4jImpl(Class<?> clazz) {
+        log = LogFactory.getLog(clazz);
     }
 
     @Override
@@ -29,27 +28,32 @@ public class Log4jImpl implements Log {
 
     @Override
     public void error(String s, Throwable e) {
-        log.log(FQCN, Level.ERROR, s, e);
+        log.error(s, e);
     }
 
     @Override
     public void error(String s) {
-        log.log(FQCN, Level.ERROR, s, null);
+        log.error(s);
     }
 
     @Override
     public void debug(String s) {
-        log.log(FQCN, Level.DEBUG, s, null);
+        log.debug(s);
     }
 
     @Override
     public void trace(String s) {
-        log.log(FQCN, Level.TRACE, s, null);
+        log.trace(s);
     }
 
     @Override
     public void warn(String s) {
-        log.log(FQCN, Level.WARN, s, null);
+        log.warn(s);
+    }
+
+    @Override
+    public void info(String s) {
+        log.info(s);
     }
 
 }

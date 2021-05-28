@@ -6,4 +6,4 @@ cup:
     username: root
     password: '123456'
   mapperpath: classpath:mapper/*.yml
-  log: true
+  log: false

@@ -2,11 +2,12 @@ package com.qlu.cup.statement;
 
 import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.executor.Executor;
+import com.qlu.cup.logging.Log;
+import com.qlu.cup.logging.log4j.Log4jImpl;
+import com.qlu.cup.logging.nologging.NoLoggingImpl;
 import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.parameter.ParameterMapping;
 import com.qlu.cup.result.ResultSetHandler;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import com.qlu.cup.util.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -19,10 +20,15 @@ import java.util.Map;
 
 public class SimpleStatementHandler extends BaseStatementHandler {
 
-    private static Log log = LogFactory.getLog(SimpleStatementHandler.class);
+    private static Log log;
 
     public SimpleStatementHandler(Executor executor, Object parameter, BoundSql boundSql) {
         super(executor, parameter, boundSql);
+        if (boundSql.getConfiguration().isLog()) {
+            log = new Log4jImpl(SimpleStatementHandler.class);
+        } else {
+            log = new NoLoggingImpl(SimpleStatementHandler.class);
+        }
     }
 
     @Override
@@ -81,9 +87,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
                 ps.setObject(parameterIndex.get(name), parameterMap.get(name));
             }
         }
-        if (boundSql.getConfiguration().isLog()) {
-            log.info("sql:" + boundSql.getSql());
-            log.info("参数:" + parameterObject.toString());
-        }
+        log.info("sql:" + boundSql.getSql());
+        log.info("参数:" + parameterObject.toString());
     }
 }
