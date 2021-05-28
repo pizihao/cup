@@ -20,8 +20,10 @@ public final class Environment {
     private final DataSource dataSource;
     //映射文件
     private final String mapperPath;
+    //日志
+    private final Boolean log;
 
-    public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource, String mapperPath) {
+    public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource, String mapperPath, Boolean log) {
         if (id == null) {
             throw new IllegalArgumentException("Parameter 'id' must not be null");
         }
@@ -35,9 +37,13 @@ public final class Environment {
         if (mapperPath == null) {
             mapperPath = PartsUtil.MAPPER_PATH;
         }
+        if (log == null) {
+            log = true;
+        }
         this.transactionFactory = transactionFactory;
         this.dataSource = dataSource;
         this.mapperPath = mapperPath;
+        this.log = log;
     }
 
     //建造模式
@@ -46,6 +52,7 @@ public final class Environment {
         private TransactionFactory transactionFactory;
         private DataSource dataSource;
         private String mapperPath;
+        private Boolean log;
 
         public Builder(String id) {
             this.id = id;
@@ -66,12 +73,17 @@ public final class Environment {
             return this;
         }
 
+        public Builder log(Boolean log) {
+            this.log = log;
+            return this;
+        }
+
         public String id() {
             return this.id;
         }
 
         public Environment build() {
-            return new Environment(this.id, this.transactionFactory, this.dataSource, this.mapperPath);
+            return new Environment(this.id, this.transactionFactory, this.dataSource, this.mapperPath, this.log);
         }
 
     }
@@ -92,4 +104,7 @@ public final class Environment {
         return mapperPath;
     }
 
+    public Boolean getLog() {
+        return log;
+    }
 }

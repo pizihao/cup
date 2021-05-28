@@ -1,15 +1,12 @@
 package com.qlu.cup;
 
-import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.cutil.CupUtil;
 import com.qlu.cup.mapper.PersonMapper;
 import com.qlu.cup.pojo.Person;
-import com.qlu.cup.pojo.Users;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.vo.FamilyVo;
 import org.junit.Test;
 
-import java.lang.reflect.Method;
 import java.util.List;
 
 /**

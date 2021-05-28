@@ -80,12 +80,15 @@ public class SqlSessionFactoryBuilder {
             //数据源
             DataSourceFactory dsFactory = new DefDataSourceFactory();
             dsFactory.setProperties(properties);
+            //日志
             DataSource dataSource = dsFactory.getDataSource();
             String mapperPath = properties.getProperty(PartsUtil.MAPPER_PATH_NAME);
+            Boolean log = Boolean.parseBoolean(properties.getProperty(PartsUtil.LOG));
             Environment.Builder environmentBuilder = new Environment.Builder(properties.getProperty(PartsUtil.ENVIRONMENT))
                     .transactionFactory(txFactory)
                     .dataSource(dataSource)
-                    .mapperPath(mapperPath);
+                    .mapperPath(mapperPath)
+                    .log(log);
             Environment environment = environmentBuilder.build();
             //创建Configuration
             Configuration configuration = new Configuration(environment);

@@ -15,6 +15,8 @@ public interface PartsUtil {
     String ENVIRONMENT = "environment";
     String MAPPER_PATH_NAME = "mapperpath";
     String MAPPER_PATH = "classpath:mapper/*.yml";
+    String LOG = "log";
+    String LOG_NAME = "true";
     /**
      * 映射文件
      */

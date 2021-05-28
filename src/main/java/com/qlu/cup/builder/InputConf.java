@@ -105,6 +105,9 @@ public class InputConf {
         if (map.containsKey(PartsUtil.MAPPER_PATH_NAME)){
             properties.put(PartsUtil.MAPPER_PATH_NAME,map.get(PartsUtil.MAPPER_PATH_NAME));
         }
+        if (map.containsKey(PartsUtil.LOG)){
+            properties.put(PartsUtil.LOG,map.get(PartsUtil.LOG).toString());
+        }
         map = (Map<String, Object>) map.get(PartsUtil.DATA_SOURCE);
         if (map != null) {
             properties.putAll(map);

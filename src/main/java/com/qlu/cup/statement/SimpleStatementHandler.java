@@ -5,6 +5,8 @@ import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.parameter.ParameterMapping;
 import com.qlu.cup.result.ResultSetHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import com.qlu.cup.util.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class SimpleStatementHandler extends BaseStatementHandler {
+
+    private static Log log = LogFactory.getLog(SimpleStatementHandler.class);
 
     public SimpleStatementHandler(Executor executor, Object parameter, BoundSql boundSql) {
         super(executor, parameter, boundSql);
@@ -76,6 +80,10 @@ public class SimpleStatementHandler extends BaseStatementHandler {
                 //根据parameterMap和parameterIndex直接注入参数
                 ps.setObject(parameterIndex.get(name), parameterMap.get(name));
             }
+        }
+        if (boundSql.getConfiguration().isLog()) {
+            log.info("sql:" + boundSql.getSql());
+            log.info("参数:" + parameterObject.toString());
         }
     }
 }

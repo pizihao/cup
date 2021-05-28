@@ -8,6 +8,7 @@ import com.qlu.cup.mapper.MapperProxyFactory;
 import com.qlu.cup.result.ResultType;
 import com.qlu.cup.session.SqlSession;
 import com.qlu.cup.transaction.Transaction;
+import com.qlu.cup.util.PartsUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -133,5 +134,9 @@ public class Configuration {
 
     public void setKnownMappers(Class<?> clazz, MapperProxyFactory knownMappers) {
         Configuration.knownMappers.put(clazz,knownMappers);
+    }
+
+    public Boolean isLog(){
+        return environment.getLog();
     }
 }
