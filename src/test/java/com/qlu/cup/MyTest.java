@@ -1,13 +1,12 @@
 package com.qlu.cup;
 
-import com.qlu.cup.bind.Configuration;
 import com.qlu.cup.builder.yml.YmlMapperRead;
 import com.qlu.cup.cutil.CupUtil;
-import com.qlu.cup.cutil.DbUtil;
-import com.qlu.cup.mapper.UsersMapper;
+import com.qlu.cup.mapper.PersonMapper;
+import com.qlu.cup.pojo.Person;
 import com.qlu.cup.pojo.Users;
-import com.qlu.cup.session.DefSqlSessionFactory;
 import com.qlu.cup.session.SqlSession;
+import com.qlu.cup.vo.FamilyVo;
 import org.junit.Test;
 
 import java.lang.reflect.Method;
@@ -21,30 +20,51 @@ import java.util.List;
  **/
 public class MyTest {
     @Test
-    public void test() {
-        DbUtil.selectList();
+    public void insertTest() {
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        int count = mapper.addUser(new Person("测试", 20));
+        System.out.println(count);
     }
 
     @Test
-    public void ymlTest() {
-        CupUtil cupUtil = new CupUtil();
+    public void selectTest() {
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        Person person = mapper.getUserById(500);
+        System.out.println(person);
     }
 
     @Test
     public void mapperTest() {
-        CupUtil cupUtil = new CupUtil();
-        SqlSession sqlSession = cupUtil.getSqlSession();
-        UsersMapper mapper = sqlSession.getMapper(UsersMapper.class);
-        List<Users> userList = mapper.getUserList();
-        System.out.println(userList);
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        List<Person> userList = mapper.getUserList();
+        userList.forEach(System.out::println);
     }
 
     @Test
-    public void method(){
-        try {
-            System.out.println(YmlMapperRead.checkOverload(Class.forName("com.qlu.cup.mapper.PersonMapper")));
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+    public void deleteTest() {
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        int count = mapper.deleteById(500);
+        System.out.println(count);
     }
+
+    @Test
+    public void updateTest() {
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        int count = mapper.updateById(new Person(500,"修改测试",21));
+        System.out.println(count);
+    }
+
+    @Test
+    public void joinTest(){
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        List<FamilyVo> family = mapper.getFamily(1);
+        System.out.println(family);
+    }
+
+    public <T> T getMapper(Class<T> clazz){
+        CupUtil cupUtil = new CupUtil();
+        SqlSession sqlSession = cupUtil.getSqlSession();
+        return sqlSession.getMapper(clazz);
+    }
+
 }

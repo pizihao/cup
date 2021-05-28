@@ -89,10 +89,7 @@ public class Configuration {
         this.environment = environment;
     }
 
-    public static Configuration getConfiguration(Environment environment) {
-        if (configuration == null) {
-            configuration = new Configuration(environment);
-        }
+    public static Configuration getConfiguration() {
         return configuration;
     }
     public Map<String, BoundSql> getSqlMap() {
@@ -118,26 +115,23 @@ public class Configuration {
         return new CupExecutor(environment, tx);
     }
 
-    public Configuration setSqlMap(Map<String, BoundSql> sqlMap) {
+    public void setSqlMap(Map<String, BoundSql> sqlMap) {
         Configuration.sqlMap = sqlMap;
-        return this;
     }
 
     public Map<String, ResultType> getResultMap() {
         return resultMap;
     }
 
-    public Configuration setResultMap(String name, ResultType resultMap) {
+    public void setResultMap(String name, ResultType resultMap) {
         Configuration.resultMap.put(name, resultMap);
-        return this;
     }
 
     public Map<Class<?>, MapperProxyFactory<?>> getKnownMappers() {
         return knownMappers;
     }
 
-    public Configuration setKnownMappers(Class<?> clazz, MapperProxyFactory knownMappers) {
+    public void setKnownMappers(Class<?> clazz, MapperProxyFactory knownMappers) {
         Configuration.knownMappers.put(clazz,knownMappers);
-        return this;
     }
 }

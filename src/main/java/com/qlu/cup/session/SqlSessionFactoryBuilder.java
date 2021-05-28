@@ -71,6 +71,9 @@ public class SqlSessionFactoryBuilder {
      */
     public Configuration txAndDs(Properties properties) {
         try {
+            if (Configuration.getConfiguration() != null){
+                return Configuration.getConfiguration();
+            }
             //事务管理器
             TransactionFactory txFactory = new DefJdbcTransactionFactory();
             txFactory.setProperties(properties);
@@ -86,7 +89,7 @@ public class SqlSessionFactoryBuilder {
             Environment environment = environmentBuilder.build();
             //创建Configuration
             Configuration configuration = new Configuration(environment);
-            //按照mapperPath路径，读取全部的映射文件，放入环境中
+            //按照mapperPath路径，读取全部的映射文件，放入环境中z`
             YmlMapperRead.getMapper(mapperPath,configuration);
             return configuration;
         } catch (Exception e) {

@@ -50,7 +50,7 @@ public class ResultSetHandler {
                     //拿到结果的位置
                     for (Field allField : allFields) {
                         if (allField.getName().equals(entry.getKey())) {
-                            int column = resultSet.findColumn(entry.getKey());
+                                int column = resultSet.findColumn(entry.getKey());
                             //这个位置真正的值
                             Object object = getObject(column, allField.getType(), resultSet);
                             //通过setter把后去的值放进去

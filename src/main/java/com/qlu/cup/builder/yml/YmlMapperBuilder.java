@@ -130,7 +130,6 @@ public class YmlMapperBuilder {
                                         javaType(field.getType()).build());
                             }
                         }
-
                     }
                     boundSql.setParameterMap(parameterMap);
                     //获取结果映射
@@ -194,7 +193,6 @@ public class YmlMapperBuilder {
                     break;
                 }
             }
-
             sqlMap.put(namespace + "." + entry.getKey(), boundSql);
         }
         return sqlMap;

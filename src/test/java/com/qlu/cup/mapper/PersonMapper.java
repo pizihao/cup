@@ -2,6 +2,7 @@ package com.qlu.cup.mapper;
 
 import com.qlu.cup.pojo.Person;
 import com.qlu.cup.pojo.Users;
+import com.qlu.cup.vo.FamilyVo;
 
 import java.util.List;
 
@@ -14,5 +15,11 @@ public interface PersonMapper {
 
     int addUser(Person person);
 
-    Users getUserById(Integer id);
+    Person getUserById(Integer id);
+
+    int updateById(Person person);
+
+    int deleteById(Integer id);
+
+    List<FamilyVo> getFamily(Integer id);
 }

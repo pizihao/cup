@@ -3,11 +3,31 @@ mapper:
   insert:
     addUser:
       parameterType: com.qlu.cup.pojo.Person
-      sql: insert into person(name, age) values ({name}, {age})
+      sql: insert into person(name, age) values (${name}, ${age})
+
+
   select:
     getUserById:
       resultType: com.qlu.cup.pojo.Person
-      sql: select * from person where id = {id}
+      sql: select * from person where id = ${id}
     getUserList:
       resultType: com.qlu.cup.pojo.Person
       sql: select * from person
+    getFamily:
+      resultType: com.qlu.cup.vo.FamilyVo
+      sql: "select \
+            p.name as personName,c.name as childName \
+            from person p \
+            left join child c on c.p_id = p.id \
+            where p.id = ${id}"
+
+  update:
+    updateById:
+      parameterType: com.qlu.cup.pojo.Person
+      sql: update person set name = ${name}, age = ${age} where id = ${id};
+
+
+  delete:
+    deleteById:
+      resultType: int
+      sql: delete from person where id = ${id}

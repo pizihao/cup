@@ -37,9 +37,9 @@ public class MethodSignature {
     public Object convertArgsToSqlCommandParam(Configuration configuration, String statement, Object[] args) throws IllegalAccessException {
         Map<String, Integer> parameterIndex = configuration.getMappedYnode(statement).getParameterIndex();
         final int paramCount = params.size();
-        if (paramCount != parameterIndex.size()) {
-            throw new MapperException("参数映射无法匹配");
-        }
+//        if (paramCount != parameterIndex.size()) {
+//            throw new MapperException("参数映射无法匹配");
+//        }
         if (args == null || paramCount == 0) {
             return null;
         } else {
