@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * 执行器基类
+ * @author liuwenhao
  */
 public abstract class BaseExecutor implements Executor {
 
@@ -22,7 +23,9 @@ public abstract class BaseExecutor implements Executor {
 
     protected Environment environment;
 
-    //查询堆栈
+    /**
+     * 查询堆栈
+     */
     protected int queryStack = 0;
     private boolean closed;
 

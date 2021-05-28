@@ -53,7 +53,10 @@ public final class LogFactory {
         }
     }
 
-    //提供一个扩展功能，如果以上log都不满意，可以使用自定义的log
+    /**
+     * 提供一个扩展功能，如果以上log都不满意，可以使用自定义的log
+     * @param clazz
+     */
     public static synchronized void useCustomLogging(Class<? extends Log> clazz) {
         setImplementation(clazz);
     }
