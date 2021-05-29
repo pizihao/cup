@@ -189,11 +189,4 @@ public class ReflectUtil {
         }
         return findMatcher.start();
     }
-
-    public static void main(String[] args) {
-        String str = "create table ?";
-        StringBuilder builder = new StringBuilder(str);
-        int i = getIndex(str, 1);
-        System.out.println(builder.replace(i, i + 1, "index"));
-    }
 }
