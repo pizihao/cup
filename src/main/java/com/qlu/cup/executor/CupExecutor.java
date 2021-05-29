@@ -2,6 +2,8 @@ package com.qlu.cup.executor;
 
 import com.qlu.cup.bind.Environment;
 import com.qlu.cup.mapper.BoundSql;
+import com.qlu.cup.mapper.SqlType;
+import com.qlu.cup.statement.ParameterHandler;
 import com.qlu.cup.statement.SimpleStatementHandler;
 import com.qlu.cup.statement.StatementHandler;
 import com.qlu.cup.transaction.Transaction;
@@ -27,7 +29,7 @@ public class CupExecutor extends BaseExecutor {
         Statement stmt = null;
         try {
             StatementHandler handler = new SimpleStatementHandler(wrapper, parameter, boundSql);
-            stmt = prepareStatement(handler);
+            stmt = prepareStatement(handler, SqlType.valueOf(boundSql.getSqlType()).getParameterHandler());
             return handler.update(stmt);
         } finally {
             closeStatement(stmt);
@@ -40,18 +42,19 @@ public class CupExecutor extends BaseExecutor {
         Statement stmt = null;
         try {
             StatementHandler handler = new SimpleStatementHandler(wrapper, parameter, boundSql);
-            stmt = prepareStatement(handler);
+            stmt = prepareStatement(handler, SqlType.valueOf(boundSql.getSqlType()).getParameterHandler());
             return handler.<E>query(stmt);
         } finally {
             closeStatement(stmt);
         }
     }
 
-    private Statement prepareStatement(StatementHandler handler) throws SQLException {
+    private Statement prepareStatement(StatementHandler handler, ParameterHandler parameterHandler) throws SQLException {
         Statement stmt;
         Connection connection = getConnection();
         stmt = handler.prepare(connection);
-        handler.parameterize(stmt);
+        parameterHandler.parameterize(stmt, handler);
+//        handler.parameterize(stmt);
         return stmt;
     }
 }

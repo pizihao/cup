@@ -104,7 +104,7 @@ public class YmlMapperBuilder {
                 boundSql.setParameter(objectMap.get(PartsUtil.PARAMETER_TYPE).toString());
             }
             if (objectMap.containsKey(PartsUtil.SQL)) {
-                boundSql.setParameterIndex(getParameterIndex(objectMap.get(PartsUtil.SQL).toString(),boundSql));
+                boundSql.setParameterIndex(getParameterIndex(objectMap.get(PartsUtil.SQL).toString(), boundSql));
             } else {
                 throw new MapperException("请检查映射文件的正确性");
             }
@@ -118,11 +118,11 @@ public class YmlMapperBuilder {
                     Parameter[] parameters = aClassMethod.getParameters();
                     for (Parameter parameter : parameters) {
                         //判断参数类型的类加载器
-                        if (parameter.getType().getClassLoader() == null){
+                        if (parameter.getType().getClassLoader() == null) {
                             parameterMap.put(parameter.getName(), ParameterMapping.builder().configuration(configuration).
                                     namespace(namespace).name(aClassMethod.getName()).parameterName(parameter.getName()).
                                     javaType(parameter.getType()).build());
-                        }else{
+                        } else {
                             Field[] fields = getAllFields(parameter.getType());
                             for (Field field : fields) {
                                 parameterMap.put(field.getName(), ParameterMapping.builder().configuration(configuration).
@@ -186,6 +186,18 @@ public class YmlMapperBuilder {
                     ResultType resultType = ResultType.builder().name(aClassMethod.getName()).namespace(namespace).configuration(configuration)
                             .resultType(resultYmlType).resultMap(resultMap).build();
                     configuration.setResultMap(namespace + "." + entry.getKey(), resultType);
+                    //是否需要返回自增id
+                    if (objectMap.containsKey(PartsUtil.GENERATED_KEY)) {
+                        boundSql.setGeneratedKey(Boolean.parseBoolean(objectMap.get(PartsUtil.GENERATED_KEY).toString()));
+                    } else {
+                        boundSql.setGeneratedKey(Boolean.parseBoolean(PartsUtil.GENERATED_KEY_NAME));
+                    }
+                    //SQL类型
+                    if (objectMap.containsKey(PartsUtil.SQL_TYPE)) {
+                        boundSql.setSqlType(objectMap.get(PartsUtil.SQL_TYPE).toString());
+                    } else {
+                        boundSql.setSqlType(PartsUtil.SQL_TYPE_NAME);
+                    }
                     //生成最终的BoundSql
                     boundSql.setParameterMap(parameterMap);
                     boundSql.setResultType(resultType);
@@ -208,9 +220,9 @@ public class YmlMapperBuilder {
         return fieldList.toArray(fields);
     }
 
-    public static Map<String, Integer> getParameterIndex(String sql,BoundSql boundSql) {
+    public static Map<String, Integer> getParameterIndex(String sql, BoundSql boundSql) {
         //获取 ${ 和 } 中间的信息
-        GenericTokenParser parser = new GenericTokenParser("${","}");
-        return parser.parse(sql,boundSql);
+        GenericTokenParser parser = new GenericTokenParser("${", "}");
+        return parser.parse(sql, boundSql);
     }
 }

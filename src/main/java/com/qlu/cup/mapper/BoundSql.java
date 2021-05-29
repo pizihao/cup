@@ -42,7 +42,7 @@ public class BoundSql {
     private Map<String, ParameterMapping> parameterMap;
 
     /**
-     * 参数名+参数位置
+     * SQL的参数名+参数位置
      **/
     private Map<String, Integer> parameterIndex;
     /**
@@ -61,5 +61,15 @@ public class BoundSql {
      * 全局配置
      **/
     private Configuration configuration;
+
+    /**
+     * 是否返回生成的自增id
+     */
+    private Boolean generatedKey;
+
+    /**
+     * sql的类型
+     */
+    private String sqlType;
 
 }

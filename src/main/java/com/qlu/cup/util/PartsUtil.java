@@ -26,6 +26,8 @@ public interface PartsUtil {
     String SQL = "sql";
     String RESULT_TYPE = "resultType";
     String PARAMETER_TYPE = "parameterType";
+    String GENERATED_KEY = "generatedKey";
+    String GENERATED_KEY_NAME = "false";
     /**
      * 操作
      */
@@ -38,4 +40,9 @@ public interface PartsUtil {
      */
     int TIMEOUT = 5000;
     int FETCH_SIZE = 50;
+    /**
+     * sql类型
+     */
+    String SQL_TYPE = "sqlType";
+    String SQL_TYPE_NAME = "DML";
 }

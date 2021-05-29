@@ -7,6 +7,8 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @program: cup
@@ -163,5 +165,28 @@ public class ReflectUtil {
             map.put(key, value);
         }
         return map;
+    }
+
+    /**
+     * 获取某一字符串在另一个字符串中第N次出现的位置
+     *
+     * @param sql   指定的字符串
+     * @param index 位置
+     * @return 位置
+     * @author liuwenhao
+     * @date 2021/5/29 14:36
+     */
+    public static int getIndex(String sql, int index) {
+        Pattern pattern;
+        pattern = Pattern.compile("\\?");
+        Matcher findMatcher = pattern.matcher(sql);
+        int number = 0;
+        while (findMatcher.find()) {
+            number++;
+            if (number == index) {
+                break;
+            }
+        }
+        return findMatcher.start();
     }
 }

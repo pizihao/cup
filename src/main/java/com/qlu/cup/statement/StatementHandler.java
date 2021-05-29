@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 语句处理器
  */
-public interface StatementHandler {
+public interface StatementHandler{
 
   /**
    * 准备语句
@@ -44,4 +44,5 @@ public interface StatementHandler {
    **/
   BoundSql getBoundSql();
 
+  void parameterizeToDML(Statement statement);
 }
