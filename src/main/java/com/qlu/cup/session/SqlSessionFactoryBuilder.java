@@ -71,7 +71,7 @@ public class SqlSessionFactoryBuilder {
      */
     public Configuration txAndDs(Properties properties) {
         try {
-            if (Configuration.getConfiguration() != null){
+            if (Configuration.getConfiguration() != null) {
                 return Configuration.getConfiguration();
             }
             //事务管理器
@@ -83,17 +83,26 @@ public class SqlSessionFactoryBuilder {
             //日志
             DataSource dataSource = dsFactory.getDataSource();
             String mapperPath = properties.getProperty(PartsUtil.MAPPER_PATH_NAME);
-            Boolean log = Boolean.parseBoolean(properties.getProperty(PartsUtil.LOG));
+            Boolean log = null;
+            if (properties.getProperty(PartsUtil.LOG) != null) {
+                log = Boolean.parseBoolean(properties.getProperty(PartsUtil.LOG));
+            }
+            Boolean cache = null;
+            if (properties.getProperty(PartsUtil.CACHE) != null) {
+                cache = Boolean.parseBoolean(properties.getProperty(PartsUtil.CACHE));
+            }
+
             Environment.Builder environmentBuilder = new Environment.Builder(properties.getProperty(PartsUtil.ENVIRONMENT))
                     .transactionFactory(txFactory)
                     .dataSource(dataSource)
                     .mapperPath(mapperPath)
-                    .log(log);
+                    .log(log)
+                    .cache(cache);
             Environment environment = environmentBuilder.build();
             //创建Configuration
             Configuration configuration = new Configuration(environment);
             //按照mapperPath路径，读取全部的映射文件，放入环境中z`
-            YmlMapperRead.getMapper(mapperPath,configuration);
+            YmlMapperRead.getMapper(mapperPath, configuration);
             return configuration;
         } catch (Exception e) {
             e.printStackTrace();

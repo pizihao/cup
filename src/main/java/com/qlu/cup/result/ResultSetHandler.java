@@ -75,6 +75,7 @@ public class ResultSetHandler {
             }
             eList.add(instance);
         }
+        boundSql.getConfiguration().getCupCache().putCache(boundSql.getNameId(),eList);
         return (List<E>) eList;
     }
 

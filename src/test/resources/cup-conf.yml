@@ -2,8 +2,9 @@ cup:
   environment: development
   datasource:
     driver: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://47.100.139.231:3306/root_home?characterEncoding=UTF-8&useUnicode=true&serverTimezone=UTC&useSSL=true
+    url: jdbc:mysql://localhost:3306/localmy?characterEncoding=UTF-8&useUnicode=true&serverTimezone=UTC&useSSL=true
     username: root
     password: '123456'
   mapperpath: classpath:mapper/*.yml
-  log: false
+  log: true
+  cache: false

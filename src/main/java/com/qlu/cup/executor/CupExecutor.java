@@ -54,7 +54,6 @@ public class CupExecutor extends BaseExecutor {
         Connection connection = getConnection();
         stmt = handler.prepare(connection);
         parameterHandler.parameterize(stmt, handler);
-//        handler.parameterize(stmt);
         return stmt;
     }
 }

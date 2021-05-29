@@ -22,8 +22,10 @@ public final class Environment {
     private final String mapperPath;
     //日志
     private final Boolean log;
+    //缓存
+    private final Boolean cache;
 
-    public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource, String mapperPath, Boolean log) {
+    public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource, String mapperPath, Boolean log, Boolean cache) {
         if (id == null) {
             throw new IllegalArgumentException("Parameter 'id' must not be null");
         }
@@ -40,10 +42,14 @@ public final class Environment {
         if (log == null) {
             log = true;
         }
+        if (cache == null) {
+            cache = true;
+        }
         this.transactionFactory = transactionFactory;
         this.dataSource = dataSource;
         this.mapperPath = mapperPath;
         this.log = log;
+        this.cache = cache;
     }
 
     //建造模式
@@ -53,6 +59,7 @@ public final class Environment {
         private DataSource dataSource;
         private String mapperPath;
         private Boolean log;
+        private Boolean cache;
 
         public Builder(String id) {
             this.id = id;
@@ -78,12 +85,17 @@ public final class Environment {
             return this;
         }
 
+        public Builder cache(Boolean cache) {
+            this.cache = cache;
+            return this;
+        }
+
         public String id() {
             return this.id;
         }
 
         public Environment build() {
-            return new Environment(this.id, this.transactionFactory, this.dataSource, this.mapperPath, this.log);
+            return new Environment(this.id, this.transactionFactory, this.dataSource, this.mapperPath, this.log, this.cache);
         }
 
     }
@@ -106,5 +118,9 @@ public final class Environment {
 
     public Boolean getLog() {
         return log;
+    }
+
+    public Boolean getCache() {
+        return cache;
     }
 }

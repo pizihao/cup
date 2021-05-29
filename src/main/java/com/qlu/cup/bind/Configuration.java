@@ -1,6 +1,9 @@
 package com.qlu.cup.bind;
 
 import com.qlu.cup.builder.yml.MapperException;
+import com.qlu.cup.cache.Cacheable;
+import com.qlu.cup.cache.CupCache;
+import com.qlu.cup.cache.NoCache;
 import com.qlu.cup.executor.CupExecutor;
 import com.qlu.cup.executor.Executor;
 import com.qlu.cup.mapper.BoundSql;
@@ -34,6 +37,8 @@ public class Configuration {
     protected static Map<String, ResultType> resultMap = new HashMap<>(16);
 
     private static Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<>();
+
+    private static Cacheable cupCache;
 
     /**
      * @param type       接口
@@ -138,5 +143,14 @@ public class Configuration {
 
     public Boolean isLog(){
         return environment.getLog();
+    }
+
+    public Cacheable getCupCache() {
+        if (environment.getCache()){
+            cupCache = new CupCache();
+        }else{
+            cupCache = new NoCache();
+        }
+        return cupCache;
     }
 }

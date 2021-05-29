@@ -2,6 +2,7 @@ package com.qlu.cup.executor;
 
 import com.qlu.cup.bind.Environment;
 import com.qlu.cup.bind.ErrorContext;
+import com.qlu.cup.cache.CupCache;
 import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.transaction.Transaction;
 
@@ -13,6 +14,7 @@ import java.util.List;
 
 /**
  * 执行器基类
+ *
  * @author liuwenhao
  */
 public abstract class BaseExecutor implements Executor {
@@ -74,7 +76,8 @@ public abstract class BaseExecutor implements Executor {
         if (closed) {
             throw new ExecutorException("Executor was closed.");
         }
-        //先清局部缓存，再更新，如何更新交由子类，模板方法模式
+        //先清局部缓存，再更新
+        boundSql.getConfiguration().getCupCache().removeCache(boundSql.getNameId());
         return doUpdate(boundSql, parameter);
     }
 
@@ -86,8 +89,12 @@ public abstract class BaseExecutor implements Executor {
             throw new ExecutorException("Executor was closed.");
         }
         List<E> list;
+        //先查看缓存中是否存在数据，如果有则直接使用
+        Object cacheList = boundSql.getConfiguration().getCupCache().getCache(boundSql.getNameId());
+        if (cacheList != null) {
+            return (List<E>) cacheList;
+        }
         try {
-            //加一,这样递归调用到上面的时候就不会再清局部缓存了
             queryStack++;
             list = queryFromDatabase(parameter, boundSql);
         } finally {

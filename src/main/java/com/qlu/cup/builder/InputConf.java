@@ -108,6 +108,9 @@ public class InputConf {
         if (map.containsKey(PartsUtil.LOG)){
             properties.put(PartsUtil.LOG,map.get(PartsUtil.LOG).toString());
         }
+        if (map.containsKey(PartsUtil.CACHE)){
+            properties.put(PartsUtil.CACHE,map.get(PartsUtil.CACHE).toString());
+        }
         map = (Map<String, Object>) map.get(PartsUtil.DATA_SOURCE);
         if (map != null) {
             properties.putAll(map);

@@ -139,5 +139,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
             builder.replace(index, index + 1, parameterMap.get(name));
         }
         boundSql.setSql(builder.toString());
+        log.info("sql:" + boundSql.getSql());
+        log.info("参数:" + parameterObject.toString());
     }
 }

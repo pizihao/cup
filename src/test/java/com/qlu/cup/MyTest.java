@@ -56,6 +56,8 @@ public class MyTest {
         PersonMapper mapper = getMapper(PersonMapper.class);
         List<FamilyVo> family = mapper.getFamily(1);
         System.out.println(family);
+        List<FamilyVo> family1 = mapper.getFamily(1);
+        System.out.println(family1);
     }
 
     @Test

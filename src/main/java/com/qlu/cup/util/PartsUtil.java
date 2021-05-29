@@ -28,6 +28,8 @@ public interface PartsUtil {
     String PARAMETER_TYPE = "parameterType";
     String GENERATED_KEY = "generatedKey";
     String GENERATED_KEY_NAME = "false";
+    String CACHE = "cache";
+    String CACHE_NAME = "true";
     /**
      * 操作
      */
