@@ -62,4 +62,9 @@ public class BoundSql {
      **/
     private Configuration configuration;
 
+    /**
+     * 是否返回生成的自增id
+     */
+    private Boolean generatedKey;
+
 }

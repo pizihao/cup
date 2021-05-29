@@ -24,6 +24,8 @@ public interface PartsUtil {
     String SQL = "sql";
     String RESULT_TYPE = "resultType";
     String PARAMETER_TYPE = "parameterType";
+    String GENERATED_KEY = "generatedKey";
+    String GENERATED_KEY_NAME = "false";
     /**
      * 操作
      */

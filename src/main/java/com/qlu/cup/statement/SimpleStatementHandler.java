@@ -8,10 +8,7 @@ import com.qlu.cup.result.ResultSetHandler;
 import com.qlu.cup.util.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +22,15 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     public int update(Statement statement) throws SQLException {
         PreparedStatement ps = (PreparedStatement) statement;
         ps.execute();
-        return statement.getUpdateCount();
+        int result = ps.getUpdateCount();
+        //添加自增id
+        if (boundSql.getGeneratedKey()){
+            ResultSet generatedKeys = ps.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                result = generatedKeys.getInt(1);
+            }
+        }
+        return result;
     }
 
     @Override
