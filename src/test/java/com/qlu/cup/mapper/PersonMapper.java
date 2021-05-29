@@ -22,4 +22,6 @@ public interface PersonMapper {
     int deleteById(Integer id);
 
     List<FamilyVo> getFamily(Integer id);
+
+    int creatTable(String tableName);
 }

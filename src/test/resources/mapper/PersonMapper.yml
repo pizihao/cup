@@ -25,6 +25,9 @@ mapper:
     updateById:
       parameterType: com.qlu.cup.pojo.Person
       sql: update person set name = ${name}, age = ${age} where id = ${id};
+    creatTable:
+      sqlType: DDL
+      sql: create table ${tableName}(id int)
 
 
   delete:

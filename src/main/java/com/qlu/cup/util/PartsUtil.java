@@ -38,4 +38,9 @@ public interface PartsUtil {
      */
     int TIMEOUT = 5000;
     int FETCH_SIZE = 50;
+    /**
+     * sql类型
+     */
+    String SQL_TYPE = "sqlType";
+    String SQL_TYPE_NAME = "DML";
 }

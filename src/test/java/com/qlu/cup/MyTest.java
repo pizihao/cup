@@ -61,6 +61,13 @@ public class MyTest {
         System.out.println(family);
     }
 
+    @Test
+    public void creatTable(){
+        PersonMapper mapper = getMapper(PersonMapper.class);
+        int person = mapper.creatTable("person");
+        System.out.println(person);
+    }
+
     public <T> T getMapper(Class<T> clazz){
         CupUtil cupUtil = new CupUtil();
         SqlSession sqlSession = cupUtil.getSqlSession();

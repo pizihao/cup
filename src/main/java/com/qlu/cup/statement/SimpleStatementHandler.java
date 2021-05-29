@@ -2,7 +2,9 @@ package com.qlu.cup.statement;
 
 import com.qlu.cup.builder.yml.MapperException;
 import com.qlu.cup.executor.Executor;
+import com.qlu.cup.executor.ExecutorException;
 import com.qlu.cup.mapper.BoundSql;
+import com.qlu.cup.mapper.SqlType;
 import com.qlu.cup.parameter.ParameterMapping;
 import com.qlu.cup.result.ResultSetHandler;
 import com.qlu.cup.util.ReflectUtil;
@@ -20,15 +22,27 @@ public class SimpleStatementHandler extends BaseStatementHandler {
 
     @Override
     public int update(Statement statement) throws SQLException {
-        PreparedStatement ps = (PreparedStatement) statement;
-        ps.execute();
-        int result = ps.getUpdateCount();
-        //添加自增id
-        if (boundSql.getGeneratedKey()){
-            ResultSet generatedKeys = ps.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                result = generatedKeys.getInt(1);
+        int result = 0;
+        if (boundSql.getSqlType().equals(SqlType.DML.getName())) {
+            PreparedStatement ps = (PreparedStatement) statement;
+            ps.execute();
+            result = ps.getUpdateCount();
+            //添加自增id
+            if (Boolean.TRUE.equals(boundSql.getGeneratedKey())) {
+                ResultSet generatedKeys = ps.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    result = generatedKeys.getInt(1);
+                }
             }
+            return result;
+        }
+        if (boundSql.getSqlType().equals(SqlType.DDL.getName())) {
+            statement.execute(boundSql.getSql());
+            result = statement.getUpdateCount();
+            return result;
+        }
+        if (boundSql.getSqlType().equals(SqlType.DCL.getName())) {
+            throw new ExecutorException("不支持的sql类型:DCL");
         }
         return result;
     }
@@ -82,5 +96,36 @@ public class SimpleStatementHandler extends BaseStatementHandler {
                 ps.setObject(parameterIndex.get(name), parameterMap.get(name));
             }
         }
+    }
+
+    @Override
+    public void parameterizeToDML(Statement statement) {
+        //判断参数
+        if (parameterObject == null) {
+            return;
+        }
+        //获取现在的sql语句
+        String sql = boundSql.getSql();
+        StringBuilder builder = new StringBuilder(sql);
+        //获取参数
+        Map<String, String> parameterMap = ReflectUtil.mapStringToMap(parameterObject.toString());
+        //参数的位置
+        Map<String, Integer> parameterIndex = boundSql.getParameterIndex();
+        //参数对应的类型和名字
+        Map<String, ParameterMapping> mappingMap = boundSql.getParameterMap();
+        //进行字符串的替换
+        for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
+            //找到对应key在parameterIndex中的位置
+            String name = entry.getKey();
+            //判断是否存在这个参数的映射
+            if (mappingMap.get(name) == null || parameterIndex.get(name) == null) {
+                throw new MapperException("无法映射的参数:" + name);
+            }
+            //找到占位符对应的位置
+            int index = ReflectUtil.getIndex(sql, parameterIndex.get(name));
+            //把这个位置的占位替换为参数
+            builder.replace(index, index + 1, parameterMap.get(name));
+        }
+        boundSql.setSql(builder.toString());
     }
 }

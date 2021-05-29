@@ -192,6 +192,12 @@ public class YmlMapperBuilder {
                     } else {
                         boundSql.setGeneratedKey(Boolean.parseBoolean(PartsUtil.GENERATED_KEY_NAME));
                     }
+                    //SQL类型
+                    if (objectMap.containsKey(PartsUtil.SQL_TYPE)) {
+                        boundSql.setSqlType(objectMap.get(PartsUtil.SQL_TYPE).toString());
+                    } else {
+                        boundSql.setSqlType(PartsUtil.SQL_TYPE_NAME);
+                    }
                     //生成最终的BoundSql
                     boundSql.setParameterMap(parameterMap);
                     boundSql.setResultType(resultType);
