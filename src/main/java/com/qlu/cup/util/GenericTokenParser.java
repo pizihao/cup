@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 普通记号解析器，处理#{}和${}参数
+ * 普通记号解析器，处理${}参数
  */
 public class GenericTokenParser {
 
