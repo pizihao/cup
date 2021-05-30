@@ -11,10 +11,14 @@ import java.util.Map;
  **/
 public class NoCache implements Cacheable {
 
-    public static Map<String, Object> cachePool;
+    protected static final Map<String, Map<String, Object>> CACHE_POOL_POOL = new HashMap<>();
+
+    public Object putCache(String key, Object obj) {
+        return null;
+    }
 
     @Override
-    public Object putCache(String key, Object obj) {
+    public Object putCache(String name, String key, Object obj) {
         return null;
     }
 
@@ -25,6 +29,11 @@ public class NoCache implements Cacheable {
 
     @Override
     public Object getCache(String nameId) {
+        return null;
+    }
+
+    @Override
+    public Object getCache(String name , String nameId) {
         return null;
     }
 }

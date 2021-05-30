@@ -77,7 +77,7 @@ public abstract class BaseExecutor implements Executor {
             throw new ExecutorException("Executor was closed.");
         }
         //先清局部缓存，再更新
-        boundSql.getConfiguration().getCupCache().removeCache(boundSql.getNameId());
+        boundSql.getConfiguration().getCupCache().removeCache(boundSql.getNamespace(), boundSql.getName());
         return doUpdate(boundSql, parameter);
     }
 
@@ -90,7 +90,7 @@ public abstract class BaseExecutor implements Executor {
         }
         List<E> list;
         //先查看缓存中是否存在数据，如果有则直接使用
-        Object cacheList = boundSql.getConfiguration().getCupCache().getCache(boundSql.getNameId());
+        Object cacheList = boundSql.getConfiguration().getCupCache().getCache(boundSql.getNamespace(), boundSql.getName());
         if (cacheList != null) {
             return (List<E>) cacheList;
         }
