@@ -14,8 +14,10 @@ import com.qlu.cup.util.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class SimpleStatementHandler extends BaseStatementHandler {
 
@@ -86,12 +88,13 @@ public class SimpleStatementHandler extends BaseStatementHandler {
             return;
         }
         PreparedStatement ps = (PreparedStatement) statement;
-        //拿到传入的参数
-        Map<String, String> parameterMap = ReflectUtil.mapStringToMap(parameterObject.toString());
-        //拿到参数对应的类型和名字
-        Map<String, ParameterMapping> mappingMap = boundSql.getParameterMap();
         //获取参数对应的位置
         Map<String, Integer> parameterIndex = boundSql.getParameterIndex();
+        Map<Integer, String> collect = parameterIndex.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        //获取参数
+        Map<String, String> parameterMap = ReflectUtil.strStringToMap(collect, parameterObject.toString());
+        //拿到参数对应的类型和名字
+        Map<String, ParameterMapping> mappingMap = boundSql.getParameterMap();
         //cup需要根据位置设置对应的参数
         for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
             //找到对应key在parameterIndex中的位置
@@ -119,10 +122,11 @@ public class SimpleStatementHandler extends BaseStatementHandler {
         //获取现在的sql语句
         String sql = boundSql.getSql();
         StringBuilder builder = new StringBuilder(sql);
-        //获取参数
-        Map<String, String> parameterMap = ReflectUtil.mapStringToMap(parameterObject.toString());
         //参数的位置
         Map<String, Integer> parameterIndex = boundSql.getParameterIndex();
+        Map<Integer, String> collect = parameterIndex.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        //获取参数
+        Map<String, String> parameterMap = ReflectUtil.strStringToMap(collect, parameterObject.toString());
         //参数对应的类型和名字
         Map<String, ParameterMapping> mappingMap = boundSql.getParameterMap();
         //进行字符串的替换

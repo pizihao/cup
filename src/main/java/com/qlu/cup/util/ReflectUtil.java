@@ -191,13 +191,18 @@ public class ReflectUtil {
         return findMatcher.start();
     }
 
-    public static Map<? extends String,?> strStringToMap(SortedMap<Integer, String> params, String str) {
+    public static Map<String, String> strStringToMap(Map<Integer, String> params, String str) {
         str = str.substring(1, str.length() - 1);
         String[] strs = str.split(",");
         Map<String, String> map = new HashMap<String, String>(16);
-
         for (int i = 0; i < strs.length; i++) {
-            map.put(strs[i],params.get(i));
+            String s = "";
+            if (strs[i].contains("=")) {
+                s = strs[i].split("=")[1];
+            } else {
+                s = strs[i];
+            }
+            map.put(s, params.get(i));
         }
         return map;
     }
