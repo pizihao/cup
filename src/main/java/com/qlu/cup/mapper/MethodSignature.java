@@ -60,7 +60,7 @@ public class MethodSignature {
                     if (paramCount == 1 && parameterIndex.size() == 1) {
                         parameterIndex.forEach((s, integer) -> argsMap.put(s, args[0]));
                     } else {
-                        argsMap.putAll(ReflectUtil.mapStringToMap(Arrays.toString(args)));
+                        argsMap.putAll(ReflectUtil.strStringToMap(params,Arrays.toString(args)));
                     }
                 }
             }

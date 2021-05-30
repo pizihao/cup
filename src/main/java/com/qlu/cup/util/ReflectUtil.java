@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -188,5 +189,16 @@ public class ReflectUtil {
             }
         }
         return findMatcher.start();
+    }
+
+    public static Map<? extends String,?> strStringToMap(SortedMap<Integer, String> params, String str) {
+        str = str.substring(1, str.length() - 1);
+        String[] strs = str.split(",");
+        Map<String, String> map = new HashMap<String, String>(16);
+
+        for (int i = 0; i < strs.length; i++) {
+            map.put(strs[i],params.get(i));
+        }
+        return map;
     }
 }
