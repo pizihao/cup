@@ -85,6 +85,8 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     public void parameterize(Statement statement) throws SQLException {
         //判断是否存在参数
         if (parameterObject == null) {
+            log.info("sql:" + boundSql.getSql());
+            log.info("参数:" + parameterObject.toString());
             return;
         }
         PreparedStatement ps = (PreparedStatement) statement;
@@ -117,6 +119,8 @@ public class SimpleStatementHandler extends BaseStatementHandler {
     public void parameterizeToDML(Statement statement) {
         //判断参数
         if (parameterObject == null) {
+            log.info("sql:" + boundSql.getSql());
+            log.info("参数:" + parameterObject.toString());
             return;
         }
         //获取现在的sql语句
