@@ -202,7 +202,7 @@ public class ReflectUtil {
             } else {
                 s = strs[i];
             }
-            map.put(s, params.get(i));
+            map.put(params.get(i), s);
         }
         return map;
     }

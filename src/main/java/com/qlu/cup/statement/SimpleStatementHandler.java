@@ -90,7 +90,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
         PreparedStatement ps = (PreparedStatement) statement;
         //获取参数对应的位置
         Map<String, Integer> parameterIndex = boundSql.getParameterIndex();
-        Map<Integer, String> collect = parameterIndex.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        Map<Integer, String> collect = parameterIndex.entrySet().stream().collect(Collectors.toMap(stringIntegerEntry -> stringIntegerEntry.getValue() - 1, Map.Entry::getKey));
         //获取参数
         Map<String, String> parameterMap = ReflectUtil.strStringToMap(collect, parameterObject.toString());
         //拿到参数对应的类型和名字
@@ -124,7 +124,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
         StringBuilder builder = new StringBuilder(sql);
         //参数的位置
         Map<String, Integer> parameterIndex = boundSql.getParameterIndex();
-        Map<Integer, String> collect = parameterIndex.entrySet().stream().collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey));
+        Map<Integer, String> collect = parameterIndex.entrySet().stream().collect(Collectors.toMap(stringIntegerEntry -> stringIntegerEntry.getValue() - 1, Map.Entry::getKey));
         //获取参数
         Map<String, String> parameterMap = ReflectUtil.strStringToMap(collect, parameterObject.toString());
         //参数对应的类型和名字
