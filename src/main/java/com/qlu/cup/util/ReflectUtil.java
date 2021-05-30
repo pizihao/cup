@@ -196,13 +196,13 @@ public class ReflectUtil {
         String[] strs = str.split(",");
         Map<String, String> map = new HashMap<String, String>(16);
         for (int i = 0; i < strs.length; i++) {
-            String s = "";
             if (strs[i].contains("=")) {
-                s = strs[i].split("=")[1];
+                String key = strs[i].split("=")[0].trim();
+                String value = strs[i].split("=")[1];
+                map.put(key, value);
             } else {
-                s = strs[i];
+                map.put(params.get(i), strs[i]);
             }
-            map.put(params.get(i), s);
         }
         return map;
     }
