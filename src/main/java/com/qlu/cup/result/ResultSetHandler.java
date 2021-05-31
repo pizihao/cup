@@ -5,6 +5,7 @@ import com.qlu.cup.exception.CupException;
 import com.qlu.cup.mapper.BoundSql;
 import com.qlu.cup.util.ReflectUtil;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -45,36 +46,43 @@ public class ResultSetHandler {
         while (resultSet.next()) {
             //生成一个对象
             Object instance = aClass.newInstance();
-            for (Map.Entry<String, ResultMapping> entry : resultType.getResultMap().entrySet()) {
-                try {
-                    //拿到结果的位置
-                    for (Field allField : allFields) {
-                        if (allField.getName().equals(entry.getKey())) {
-                            int column = resultSet.findColumn(entry.getKey());
-                            //这个位置真正的值
-                            Object object = getObject(column, allField.getType(), resultSet);
-                            //通过setter把后去的值放进去
-                            String methodName = "set" + allField.getName().substring(0, 1).toUpperCase() + allField.getName().substring(1);
-                            try {
-                                Method method = instance.getClass().getMethod(methodName, allField.getType());
-                                method.invoke(instance, object);
-                            } catch (NoSuchMethodException | IllegalAccessException e) {
+            //获取类加载器
+            if (aClass.getClassLoader() == null) {
+                //java提供的类的情况
+                instance = resultSet.getObject(1);
+            } else {
+                for (Map.Entry<String, ResultMapping> entry : resultType.getResultMap().entrySet()) {
+                    try {
+                        //拿到结果的位置
+                        for (Field allField : allFields) {
+                            if (allField.getName().equals(entry.getKey())) {
+                                int column = resultSet.findColumn(entry.getKey());
+                                //这个位置真正的值
+                                Object object = getObject(column, allField.getType(), resultSet);
+                                //通过setter把后去的值放进去
+                                String methodName = "set" + allField.getName().substring(0, 1).toUpperCase() + allField.getName().substring(1);
                                 try {
-                                    //在设置属性值的时候cup不允许出现找不到方法这个异常，cup需要在在这个时候尝试属性直接赋值
-                                    //判断属性是否是private
-                                    allField.set(instance, object);
-                                } catch (IllegalAccessException ignored) {
-                                    //这样还不成功就是null吧
+                                    Method method = instance.getClass().getMethod(methodName, allField.getType());
+                                    method.invoke(instance, object);
+                                } catch (NoSuchMethodException | IllegalAccessException e) {
+                                    try {
+                                        //在设置属性值的时候cup不允许出现找不到方法这个异常，cup需要在在这个时候尝试属性直接赋值
+                                        //判断属性是否是private
+                                        allField.set(instance, object);
+                                    } catch (IllegalAccessException ignored) {
+                                        //这样还不成功就是null吧
+                                    }
                                 }
                             }
                         }
+                    } catch (SQLException ignored) {
+                        //属性和数据库字段不匹配的情况的情况,这里不能归类为一个异常
                     }
-                } catch (SQLException ignored) {
-                    //属性和数据库字段不匹配的情况的情况,这里不能归类为一个异常
                 }
             }
             eList.add(instance);
         }
+
         boundSql.getConfiguration().getCupCache().putCache(boundSql.getNamespace(), boundSql.getName(), eList);
         return (List<E>) eList;
     }
