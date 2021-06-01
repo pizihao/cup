@@ -198,10 +198,10 @@ public class ReflectUtil {
         for (int i = 0; i < strs.length; i++) {
             if (strs[i].contains("=")) {
                 String key = strs[i].split("=")[0].trim();
-                String value = strs[i].split("=")[1];
+                String value = strs[i].split("=")[1].trim();
                 map.put(key, value);
             } else {
-                map.put(params.get(i), strs[i]);
+                map.put(params.get(i + 1), strs[i]);
             }
         }
         return map;
