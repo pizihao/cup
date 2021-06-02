@@ -14,9 +14,7 @@ import com.qlu.cup.util.ReflectUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SimpleStatementHandler extends BaseStatementHandler {
@@ -86,7 +84,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
         //判断是否存在参数
         if (parameterObject == null) {
             log.info("sql:" + boundSql.getSql());
-            log.info("参数:" + parameterObject.toString());
+            log.info("参数:" + parameterObject);
             return;
         }
         PreparedStatement ps = (PreparedStatement) statement;
@@ -120,7 +118,7 @@ public class SimpleStatementHandler extends BaseStatementHandler {
         //判断参数
         if (parameterObject == null) {
             log.info("sql:" + boundSql.getSql());
-            log.info("参数:" + parameterObject.toString());
+            log.info("参数:" + parameterObject);
             return;
         }
         //获取现在的sql语句
@@ -133,10 +131,12 @@ public class SimpleStatementHandler extends BaseStatementHandler {
         Map<String, String> parameterMap = ReflectUtil.strStringToMap(collect, parameterObject.toString());
         //参数对应的类型和名字
         Map<String, ParameterMapping> mappingMap = boundSql.getParameterMap();
-        //进行字符串的替换
-        for (Map.Entry<String, String> entry : parameterMap.entrySet()) {
+        //倒序遍历 collect
+        ListIterator<Map.Entry<Integer, String>> li = new ArrayList<>(collect.entrySet()).listIterator(collect.size());
+        while(li.hasPrevious()) {
+            Map.Entry<Integer, String> entry = li.previous();
             //找到对应key在parameterIndex中的位置
-            String name = entry.getKey();
+            String name = entry.getValue();
             //判断是否存在这个参数的映射
             if (mappingMap.get(name) == null || parameterIndex.get(name) == null) {
                 throw new MapperException("无法映射的参数:" + name);

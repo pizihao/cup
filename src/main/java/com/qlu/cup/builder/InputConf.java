@@ -1,7 +1,6 @@
 package com.qlu.cup.builder;
 
 import com.qlu.cup.util.PartsUtil;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

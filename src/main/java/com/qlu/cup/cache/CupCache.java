@@ -1,5 +1,7 @@
 package com.qlu.cup.cache;
 
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,7 @@ public class CupCache implements Cacheable {
     protected static final Map<String, Map<String, Object>> CACHE_POOL_POOL = new HashMap<>();
 
 
-    private Map<String, Object> getCachePool(String namespace) {
+    public Map<String, Object> getCachePool(String namespace) {
         Map<String, Object> cachePool = CACHE_POOL_POOL.get(namespace);
         if (cachePool == null){
             putCache(namespace, new HashMap<>());
@@ -86,5 +88,11 @@ public class CupCache implements Cacheable {
     @Override
     public Object getCache(String name, String key) {
         return getCachePool(name).get(key);
+    }
+
+
+    @Override
+    public String toString() {
+        return getCachePoolPool().toString();
     }
 }
