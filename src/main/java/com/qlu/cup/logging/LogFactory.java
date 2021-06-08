@@ -16,21 +16,9 @@ public final class LogFactory {
     private static Constructor<? extends Log> logConstructor;
 
     static {
-        //这边乍一看以为开了几个并行的线程去决定使用哪个具体框架的logging，其实不然
-        //log4j
-        tryImplementation(new Runnable() {
-            @Override
-            public void run() {
-                useLog4JLogging();
-            }
-        });
+        tryImplementation(LogFactory::useLog4JLogging);
         //没有日志
-        tryImplementation(new Runnable() {
-            @Override
-            public void run() {
-                useNoLogging();
-            }
-        });
+        tryImplementation(LogFactory::useNoLogging);
     }
 
     //单例模式，不得自己new实例
@@ -43,11 +31,10 @@ public final class LogFactory {
         return getLog(aClass.getName());
     }
 
-    //根据传入的类名来构建Log
     public static Log getLog(String logger) {
         try {
             //构造函数，参数必须是一个，为String型，指明logger的名称
-            return logConstructor.newInstance(new Object[]{logger});
+            return logConstructor.newInstance(logger);
         } catch (Throwable t) {
             throw new LogException("Error creating logger for logger " + logger + ".  Cause: " + t, t);
         }
@@ -82,13 +69,12 @@ public final class LogFactory {
 
     private static void setImplementation(Class<? extends Log> implClass) {
         try {
-            Constructor<? extends Log> candidate = implClass.getConstructor(new Class[]{String.class});
-            Log log = candidate.newInstance(new Object[]{LogFactory.class.getName()});
-            log.debug("Logging initialized using '" + implClass + "' adapter.");
+            Constructor<? extends Log> candidate = implClass.getConstructor(String.class);
+            Log log = candidate.newInstance(LogFactory.class.getName());
             //设置logConstructor,一旦设上，表明找到相应的log的jar包了，那后面别的log就不找了。
             logConstructor = candidate;
         } catch (Throwable t) {
-            throw new LogException("Error setting Log implementation.  Cause: " + t, t);
+            throw new LogException("接口信息异常" + t, t);
         }
     }
 

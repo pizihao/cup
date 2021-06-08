@@ -90,7 +90,6 @@ public class ResolverUtil<T> {
         return this;
     }
 
-    //主要的方法，找一个package下满足条件的所有类,被TypeHanderRegistry,MapperRegistry,TypeAliasRegistry调用
     public ResolverUtil<T> find(Test test, String packageName) {
         String path = getPackagePath(packageName);
         try {

@@ -104,7 +104,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     public void commit() {
         final SqlSession sqlSession = localSqlSession.get();
         if (sqlSession == null) {
-            throw new SqlSessionException("Error:  Cannot commit.  No managed session is started.");
+            throw new SqlSessionException("提交失败.");
         }
         sqlSession.commit();
     }
@@ -113,7 +113,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     public void rollback() {
         final SqlSession sqlSession = localSqlSession.get();
         if (sqlSession == null) {
-            throw new SqlSessionException("Error:  Cannot rollback.  No managed session is started.");
+            throw new SqlSessionException("回滚失败.");
         }
         sqlSession.rollback();
     }
@@ -122,7 +122,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     public Connection getConnection() {
         final SqlSession sqlSession = localSqlSession.get();
         if (sqlSession == null) {
-            throw new SqlSessionException("Error:  Cannot get connection.  No managed session is started.");
+            throw new SqlSessionException("无法获取连接.");
         }
         return sqlSession.getConnection();
     }
@@ -136,7 +136,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     public void close() {
         final SqlSession sqlSession = localSqlSession.get();
         if (sqlSession == null) {
-            throw new SqlSessionException("Error:  Cannot close.  No managed session is started.");
+            throw new SqlSessionException("无法关闭.");
         }
         try {
             sqlSession.close();
@@ -157,9 +157,7 @@ public class SqlSessionManager implements SqlSessionFactory, SqlSession {
     //代理模式
     private class SqlSessionInterceptor implements InvocationHandler {
         public SqlSessionInterceptor() {
-            // Prevent Synthetic Access
         }
-
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             final SqlSession sqlSession = SqlSessionManager.this.localSqlSession.get();

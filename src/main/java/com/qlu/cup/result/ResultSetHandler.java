@@ -67,7 +67,6 @@ public class ResultSetHandler {
                                 } catch (NoSuchMethodException | IllegalAccessException e) {
                                     try {
                                         //在设置属性值的时候cup不允许出现找不到方法这个异常，cup需要在在这个时候尝试属性直接赋值
-                                        //判断属性是否是private
                                         allField.set(instance, object);
                                     } catch (IllegalAccessException ignored) {
                                         //这样还不成功就是null吧

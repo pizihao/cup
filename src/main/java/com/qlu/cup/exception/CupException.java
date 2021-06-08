@@ -3,7 +3,6 @@ package com.qlu.cup.exception;
 /**
  * 持久化异常
  */
-@SuppressWarnings("deprecation")
 public class CupException extends RuntimeException {
 
   private static final long serialVersionUID = -7537395265357977271L;

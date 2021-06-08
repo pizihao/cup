@@ -54,7 +54,7 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
         } catch (Exception e) {
             //如果打开事务出错，则关闭它
             closeTransaction(tx);
-            throw new SqlSessionException("Error opening session.  Cause: " + e, e);
+            throw new SqlSessionException("会话错误: " + e, e);
         } finally {
             //最后清空错误上下文
             ErrorContext.instance().reset();
@@ -75,7 +75,7 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
             final Executor executor = configuration.newExecutor(tx);
             return new DefSqlSession(configuration, executor, autoCommit);
         } catch (Exception e) {
-            throw new SqlSessionException("Error opening session.  Cause: " + e, e);
+            throw new SqlSessionException("会话错误: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -94,7 +94,6 @@ public class DefSqlSessionFactory implements SqlSessionFactory {
             try {
                 tx.close();
             } catch (SQLException ignore) {
-                // Intentionally ignore. Prefer previous error.
             }
         }
     }

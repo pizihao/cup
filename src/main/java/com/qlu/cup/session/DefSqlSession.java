@@ -45,7 +45,7 @@ public class DefSqlSession implements SqlSession {
         if (list.size() == 1) {
             return list.get(0);
         } else if (list.size() > 1) {
-            throw new CupException("Expected one result (or null) to be returned by selectOne(), but found: " + list.size());
+            throw new CupException("映射错误，返回了多个结果: " + list.size());
         } else {
             return null;
         }
@@ -57,7 +57,7 @@ public class DefSqlSession implements SqlSession {
             BoundSql boundSql = configuration.getMappedYnode(statement);
             return executor.query(boundSql, wrapCollection(parameter));
         } catch (Exception e) {
-            throw new SqlSessionException("Error querying database.  Cause: " + e, e);
+            throw new SqlSessionException("数据库发生错误: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -75,7 +75,7 @@ public class DefSqlSession implements SqlSession {
             BoundSql boundSql = configuration.getMappedYnode(statement);
             return executor.update(boundSql, wrapCollection(parameter));
         } catch (Exception e) {
-            throw new SqlSessionException("Error updating database.  Cause: " + e, e);
+            throw new SqlSessionException("数据库发生错误: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -93,7 +93,7 @@ public class DefSqlSession implements SqlSession {
             executor.commit(isCommitOrRollbackRequired(false));
             dirty = false;
         } catch (Exception e) {
-            throw new SqlSessionException("Error committing transaction.  Cause: " + e, e);
+            throw new SqlSessionException("数据库发生错误: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -105,7 +105,7 @@ public class DefSqlSession implements SqlSession {
             executor.rollback(isCommitOrRollbackRequired(false));
             dirty = false;
         } catch (Exception e) {
-            throw new SqlSessionException("Error rolling back transaction.  Cause: " + e, e);
+            throw new SqlSessionException("数据库发生错误: " + e, e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -136,7 +136,7 @@ public class DefSqlSession implements SqlSession {
         try {
             return executor.getTransaction().getConnection();
         } catch (SQLException e) {
-            throw new SqlSessionException("Error getting a new connection.  Cause: " + e, e);
+            throw new SqlSessionException("连接错误: " + e, e);
         }
     }
 
@@ -166,7 +166,7 @@ public class DefSqlSession implements SqlSession {
         @Override
         public V get(Object key) {
             if (!super.containsKey(key)) {
-                throw new BindException("Parameter '" + key + "' not found. Available parameters are " + this.keySet());
+                throw new BindException("参数 '" + key + "' 没有找到. 可用的参数 " + this.keySet());
             }
             return super.get(key);
         }

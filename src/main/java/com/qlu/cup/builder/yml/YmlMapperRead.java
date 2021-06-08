@@ -22,7 +22,6 @@ public class YmlMapperRead {
 
     /**
      * @param mapperPath mapper.yml 文件路径
-     * @return Map<Class < ?>, YNode>
      * @description: 将指定的mapper.yml文件读取成Map<Class < ?>, YNode>数据
      * @author liuwenaho
      * @date 2021/1/29 20:20

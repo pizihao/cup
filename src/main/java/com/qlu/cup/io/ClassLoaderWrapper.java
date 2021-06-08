@@ -84,10 +84,9 @@ public class ClassLoaderWrapper {
                 }
             }
         }
-        throw new ClassNotFoundException("Cannot find class: " + name);
+        throw new ClassNotFoundException("没有找到类：" + name);
     }
 
-    //一共5个类加载器
     ClassLoader[] getClassLoaders(ClassLoader classLoader) {
         return new ClassLoader[]{
                 classLoader,

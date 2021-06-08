@@ -8,7 +8,6 @@ import com.qlu.cup.logging.Log;
 public class NoLoggingImpl implements Log {
 
     public NoLoggingImpl(Class<?> clazz) {
-        // Do Nothing
     }
 
     @Override
@@ -23,32 +22,26 @@ public class NoLoggingImpl implements Log {
 
     @Override
     public void error(String s, Throwable e) {
-        // Do Nothing
     }
 
     @Override
     public void error(String s) {
-        // Do Nothing
     }
 
     @Override
     public void debug(String s) {
-        // Do Nothing
     }
 
     @Override
     public void trace(String s) {
-        // Do Nothing
     }
 
     @Override
     public void warn(String s) {
-        // Do Nothing
     }
 
     @Override
     public void info(String s) {
-        // Do Nothing
     }
 
 }

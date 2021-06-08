@@ -13,9 +13,6 @@ import java.sql.Types;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * ResultSet proxy to add logging
- */
 public final class ResultSetLogger extends BaseJdbcLogger implements InvocationHandler {
 
     private static Set<Integer> BLOB_TYPES = new HashSet<Integer>();
@@ -98,7 +95,6 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
                     colname = rs.getString(i);
                 }
             } catch (SQLException e) {
-                // generally can't call getString() on a BLOB column
                 colname = "<<Cannot Display>>";
             }
             row.append(colname);
@@ -109,23 +105,12 @@ public final class ResultSetLogger extends BaseJdbcLogger implements InvocationH
         trace(row.toString(), false);
     }
 
-    /*
-     * Creates a logging version of a ResultSet
-     *
-     * @param rs - the ResultSet to proxy
-     * @return - the ResultSet with logging
-     */
     public static ResultSet newInstance(ResultSet rs, Log statementLog, int queryStack) {
         InvocationHandler handler = new ResultSetLogger(rs, statementLog, queryStack);
         ClassLoader cl = ResultSet.class.getClassLoader();
         return (ResultSet) Proxy.newProxyInstance(cl, new Class[]{ResultSet.class}, handler);
     }
 
-    /*
-     * Get the wrapped result set
-     *
-     * @return the resultSet
-     */
     public ResultSet getRs() {
         return rs;
     }

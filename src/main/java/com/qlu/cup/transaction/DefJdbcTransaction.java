@@ -61,9 +61,8 @@ public class DefJdbcTransaction implements Transaction {
                 connection.setAutoCommit(desiredAutoCommit);
             }
         } catch (SQLException e) {
-            throw new TransactionException("Error configuring AutoCommit.  "
-                    + "Your driver may not support getAutoCommit() or setAutoCommit(). "
-                    + "Requested setting: " + desiredAutoCommit + ".  Cause: " + e, e);
+            throw new TransactionException("自动提交配置错误，"
+                    + "要求的配置是: " + desiredAutoCommit + ".  Cause: " + e, e);
         }
     }
 

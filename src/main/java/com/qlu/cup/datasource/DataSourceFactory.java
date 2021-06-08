@@ -4,11 +4,13 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * 数据源工厂
- */
+ * @program: cup
+ * @description: 数据源工厂
+ * @author: liuwenhao
+ * @create: 2021-01-25 21:53
+ **/
 public interface DataSourceFactory {
 
-  //设置属性,被XMLConfigBuilder所调用
   void setProperties(Properties props) throws Exception;
 
   DataSource getDataSource();

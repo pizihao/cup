@@ -57,7 +57,6 @@ public class MapperMethod {
         return result;
     }
 
-    //这个方法对返回值的类型进行了一些检查，使得更安全
     private Object rowCountResult(int rowCount) {
         final Object result;
         if (method.returnsVoid()) {
@@ -72,7 +71,7 @@ public class MapperMethod {
             //如果返回值是大boolean或小boolean
             result = rowCount > 0;
         } else {
-            throw new BindException("Mapper method '" + command.getName() + "' has an unsupported return type: " + method.getReturnType());
+            throw new BindException("映射方法'" + command.getName() + "' 的返回类型是不被支持的: " + method.getReturnType());
         }
         return result;
     }
@@ -82,7 +81,7 @@ public class MapperMethod {
         BoundSql ms = sqlSession.getConfiguration().getSqlMap().get(command.getName());
         if (void.class.equals(ms.getResultType())) {
             throw new BindException("method " + command.getName()
-                    + " needs resultType attribute in YML so a ResultProcessor can be used as a parameter.");
+                    + "需要YML中的resultType属性，以便ResultProcessor可以用作参数.");
         }
         Object param = method.convertArgsToSqlCommandParam(configuration, command.getName(), args);
         sqlSession.select(command.getName(), param);

@@ -53,7 +53,7 @@ public abstract class BaseStatementHandler implements StatementHandler {
             throw e;
         } catch (Exception e) {
             closeStatement(statement);
-            throw new ExecutorException("Error preparing statement.  Cause: " + e, e);
+            throw new ExecutorException("准备语句错误。导致: " + e, e);
         }
     }
 

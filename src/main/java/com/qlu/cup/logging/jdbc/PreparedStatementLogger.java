@@ -10,9 +10,6 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
-/**
- * PreparedStatement proxy to add logging
- */
 public final class PreparedStatementLogger extends BaseJdbcLogger implements InvocationHandler {
 
     private PreparedStatement statement;
@@ -63,18 +60,12 @@ public final class PreparedStatementLogger extends BaseJdbcLogger implements Inv
         }
     }
 
-    /**
-     * Creates a logging version of a PreparedStatement
-     */
     public static PreparedStatement newInstance(PreparedStatement stmt, Log statementLog, int queryStack) {
         InvocationHandler handler = new PreparedStatementLogger(stmt, statementLog, queryStack);
         ClassLoader cl = PreparedStatement.class.getClassLoader();
         return (PreparedStatement) Proxy.newProxyInstance(cl, new Class[]{PreparedStatement.class, CallableStatement.class}, handler);
     }
 
-    /**
-     * Return the wrapped prepared statement
-     */
     public PreparedStatement getPreparedStatement() {
         return statement;
     }

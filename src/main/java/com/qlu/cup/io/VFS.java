@@ -15,10 +15,8 @@ import java.util.List;
  * @author liuwenhao
  */
 public abstract class VFS {
-    //默认提供2个实现 JBoss6VFS,DefaultVFS
     public static final Class<?>[] IMPLEMENTATIONS = {JBoss6VFS.class, DefaultVFS.class};
 
-    //这里是提供一个用户扩展点，可以让用户自定义VFS实现
     public static final List<Class<? extends VFS>> USER_IMPLEMENTATIONS = new ArrayList<Class<? extends VFS>>();
 
     private static VFS instance;

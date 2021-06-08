@@ -12,6 +12,7 @@ import java.sql.Statement;
 
 /**
  * Connection proxy to add logging
+ * @author liuwenhao
  */
 public final class ConnectionLogger extends BaseJdbcLogger implements InvocationHandler {
 

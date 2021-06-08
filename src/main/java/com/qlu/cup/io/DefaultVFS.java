@@ -91,7 +91,6 @@ public class DefaultVFS extends VFS {
     }
 
     protected List<String> listResources(JarInputStream jar, String path) throws IOException {
-        // Include the leading and trailing slash when matching names
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
@@ -138,7 +137,7 @@ public class DefaultVFS extends VFS {
                     try {
                         file = new File(URLEncoder.encode(jarUrl.toString(), "UTF-8"));
                     } catch (UnsupportedEncodingException e) {
-                        throw new RuntimeException("Unsupported encoding?  UTF-8?  That's unpossible.");
+                        throw new RuntimeException("不支持的编码格式");
                     }
                 }
                 if (file.exists()) {

@@ -30,7 +30,7 @@ public class SqlSessionFactoryBuilder {
             Properties properties = InputConf.getProperties(reader);
             return build(txAndDs(properties));
         } catch (Exception e) {
-            throw new SqlSessionException("Error building SqlSession.", e);
+            throw new SqlSessionException("SqlSession 构建异常.", e);
         } finally {
             ErrorContext.instance().reset();
             try {
@@ -46,7 +46,7 @@ public class SqlSessionFactoryBuilder {
             Properties properties = InputConf.getProperties(inputStream);
             return build(txAndDs(properties));
         } catch (Exception e) {
-            throw new SqlSessionException("Error building SqlSession.", e);
+            throw new SqlSessionException("SqlSession 构建异常.", e);
         } finally {
             ErrorContext.instance().reset();
             try {
@@ -60,7 +60,7 @@ public class SqlSessionFactoryBuilder {
         try {
             return build(txAndDs(properties));
         } catch (Exception e) {
-            throw new SqlSessionException("Error building SqlSession.", e);
+            throw new SqlSessionException("SqlSession 构建异常.", e);
         } finally {
             ErrorContext.instance().reset();
         }
@@ -101,7 +101,7 @@ public class SqlSessionFactoryBuilder {
             Environment environment = environmentBuilder.build();
             //创建Configuration
             Configuration configuration = new Configuration(environment);
-            //按照mapperPath路径，读取全部的映射文件，放入环境中z`
+            //按照mapperPath路径，读取全部的映射文件，放入环境中`
             YmlMapperRead.getMapper(mapperPath, configuration);
             return configuration;
         } catch (Exception e) {

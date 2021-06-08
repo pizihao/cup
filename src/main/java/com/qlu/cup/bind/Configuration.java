@@ -59,7 +59,7 @@ public class Configuration {
         try {
             return mapperProxyFactory.newInstance(sqlSession);
         } catch (Exception e) {
-            throw new BindException("Error getting mapper instance. Cause: " + e, e);
+            throw new BindException("找不到映射信息: " + e, e);
         }
     }
 

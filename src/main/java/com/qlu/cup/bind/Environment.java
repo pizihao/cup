@@ -27,14 +27,14 @@ public final class Environment {
 
     public Environment(String id, TransactionFactory transactionFactory, DataSource dataSource, String mapperPath, Boolean log, Boolean cache) {
         if (id == null) {
-            throw new IllegalArgumentException("Parameter 'id' must not be null");
+            throw new IllegalArgumentException("参数id不能为null");
         }
         if (transactionFactory == null) {
-            throw new IllegalArgumentException("Parameter 'transactionFactory' must not be null");
+            throw new IllegalArgumentException("参数transactionFactory不能为null");
         }
         this.id = id;
         if (dataSource == null) {
-            throw new IllegalArgumentException("Parameter 'dataSource' must not be null");
+            throw new IllegalArgumentException("参数dataSource不能为null");
         }
         if (mapperPath == null) {
             mapperPath = PartsUtil.MAPPER_PATH;

@@ -14,7 +14,6 @@ import java.util.List;
 
 /**
  * 执行器基类
- *
  * @author liuwenhao
  */
 public abstract class BaseExecutor implements Executor {
@@ -41,7 +40,7 @@ public abstract class BaseExecutor implements Executor {
     @Override
     public Transaction getTransaction() {
         if (closed) {
-            throw new ExecutorException("Executor was closed.");
+            throw new ExecutorException("执行器已经关闭");
         }
         return transaction;
     }
@@ -57,7 +56,6 @@ public abstract class BaseExecutor implements Executor {
                 }
             }
         } catch (SQLException e) {
-            // Ignore.  There's nothing that can be done at this point.
         } finally {
             transaction = null;
             closed = true;
@@ -69,7 +67,6 @@ public abstract class BaseExecutor implements Executor {
         return closed;
     }
 
-    //SqlSession.update/insert/delete会调用此方法
     @Override
     public int update(BoundSql boundSql, Object parameter) throws SQLException {
         ErrorContext.instance().resource(boundSql.getHandle()).activity("executing an update").object(boundSql.getNameId());
@@ -86,7 +83,7 @@ public abstract class BaseExecutor implements Executor {
         ErrorContext.instance().resource(boundSql.getHandle()).activity("executing a query").object(boundSql.getNameId());
         //如果已经关闭，报错
         if (closed) {
-            throw new ExecutorException("Executor was closed.");
+            throw new ExecutorException("执行器已经关闭");
         }
         List<E> list;
         //先查看缓存中是否存在数据，如果有则直接使用
@@ -107,7 +104,7 @@ public abstract class BaseExecutor implements Executor {
     @Override
     public void commit(boolean required) throws SQLException {
         if (closed) {
-            throw new ExecutorException("Cannot commit, transaction is already closed");
+            throw new ExecutorException("无法提交，事务已经被关闭");
         }
         if (required) {
             transaction.commit();

@@ -34,7 +34,7 @@ public class SqlCommand {
             }
         }
         if (boundSql == null) {
-            throw new BindException("Invalid bound statement (not found): " + statementName);
+            throw new BindException("无效的绑定语句: " + statementName);
         }
         name = boundSql.getNameId();
         type = boundSql.getHandle();
