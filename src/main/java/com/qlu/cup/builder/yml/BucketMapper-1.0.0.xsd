@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--指定来自命名空间 "http://www.w3.org/2001/XMLSchema" 的元素和数据类型应该使用前缀 xs：-->
+<!--指定默认的命名空间为 空 -->
+<!--指出任何 XML 实例文档所使用的且在此 schema 中声明过的元素必须被命名空间限定-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="" elementFormDefault="qualified">
+    <xs:element name="mapper">
+        <xs:complexType>
+            <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <!--SQL片段-->
+                <xs:element name="sql">
+                    <xs:complexType mixed="true">
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="include"/>
+                        </xs:choice>
+                        <xs:attribute name="id" use="required"/>
+                    </xs:complexType>
+                    <!--设置id唯一-->
+                    <xs:unique name="idUnique">
+                        <xs:selector xpath="sql"/>
+                        <xs:field xpath="@id"/>
+                    </xs:unique>
+                </xs:element>
+                <!--新增-->
+                <xs:element name="insert">
+                    <xs:complexType mixed="true">
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="include"/>
+                        </xs:choice>
+                        <!--id-->
+                        <xs:attribute name="id" use="required"/>
+                        <!--自动生成的key-->
+                        <xs:attribute name="selectKey"/>
+                        <!--参数类型-->
+                        <xs:attribute name="parameterType"/>
+                        <!--结果类型-->
+                        <xs:attribute name="resultType"/>
+                    </xs:complexType>
+                    <!--设置id唯一-->
+                    <xs:unique name="insertIdUnique">
+                        <xs:selector xpath="insert"/>
+                        <xs:field xpath="@id"/>
+                    </xs:unique>
+                </xs:element>
+                <!--修改-->
+                <xs:element name="update">
+                    <xs:complexType mixed="true">
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="include"/>
+                        </xs:choice>
+                        <xs:attribute name="id" use="required"/>
+                        <xs:attribute name="parameterType"/>
+                        <xs:attribute name="resultType"/>
+                    </xs:complexType>
+                    <!--设置id唯一-->
+                    <xs:unique name="updateIdUnique">
+                        <xs:selector xpath="update"/>
+                        <xs:field xpath="@id"/>
+                    </xs:unique>
+                </xs:element>
+                <!--删除-->
+                <xs:element name="delete">
+                    <xs:complexType mixed="true">
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="include"/>
+                        </xs:choice>
+                        <xs:attribute name="id" use="required"/>
+                        <xs:attribute name="parameterType"/>
+                        <xs:attribute name="resultType"/>
+                    </xs:complexType>
+                    <!--设置id唯一-->
+                    <xs:unique name="deleteIdUnique">
+                        <xs:selector xpath="delete"/>
+                        <xs:field xpath="@id"/>
+                    </xs:unique>
+                </xs:element>
+                <!--查询-->
+                <xs:element name="select">
+                    <xs:complexType mixed="true">
+                        <xs:choice maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="include"/>
+                        </xs:choice>
+                        <xs:attribute name="id" use="required"/>
+                        <xs:attribute name="parameterType"/>
+                        <xs:attribute name="resultType"/>
+                    </xs:complexType>
+                    <!--设置id唯一-->
+                    <xs:unique name="selectIdUnique">
+                        <xs:selector xpath="select"/>
+                        <xs:field xpath="@id"/>
+                    </xs:unique>
+                </xs:element>
+            </xs:choice>
+            <xs:attribute name="namespace" use="required"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="include">
+        <xs:complexType>
+            <xs:attribute name="value" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

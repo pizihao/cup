@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--指定来自命名空间 "http://www.w3.org/2001/XMLSchema" 的元素和数据类型应该使用前缀 xs：-->
+<!--指定默认的命名空间为 空 -->
+<!--指出任何 XML 实例文档所使用的且在此 schema 中声明过的元素必须被命名空间限定-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="" elementFormDefault="qualified">
+    <!--定义一个节点-->
+    <xs:element name="config">
+        <!--定义复杂类型-->
+        <xs:complexType>
+            <!--指定节点必须顺序出现-->
+            <xs:sequence>
+                <!--dataSource 和 dataSources两者选用一个-->
+                <xs:choice>
+                    <!--数据库连接-->
+                    <xs:element minOccurs="0" maxOccurs="1" ref="dataSource"/>
+                    <xs:element maxOccurs="1" ref="dataSources"/>
+                </xs:choice>
+                <!--映射文件位置-->
+                <xs:element minOccurs="1" ref="mappers"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="dataSource">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="unbounded" name="property">
+                    <xs:complexType>
+                        <xs:attribute name="name" use="required"/>
+                        <xs:attribute name="value" use="required"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <!--数据库别名-->
+            <!--<xs:attribute name="alias" type="xs:string" use="optional" default="default"/>-->
+            <!--指定数据库连接池-->
+            <xs:attribute name="source" type="xs:string"/>
+            <!--指定事务管理器-->
+            <xs:attribute name="transaction" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="dataSources">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="unbounded" name="dataSource">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element minOccurs="0" maxOccurs="unbounded" name="property">
+                                <xs:complexType>
+                                    <xs:attribute name="name" use="required"/>
+                                    <xs:attribute name="value" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <!--数据库别名-->
+                        <xs:attribute name="alias" use="required"/>
+                        <!--是否默认数据源-->
+                        <xs:attribute name="default" type="xs:boolean"/>
+                        <!--指定数据库连接池-->
+                        <xs:attribute name="source" type="xs:string"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <!--指定数据源-->
+            <xs:attribute name="source" type="xs:string"/>
+            <!--指定事务管理器-->
+            <xs:attribute name="transaction" type="xs:string"/>
+            <!--驱动-->
+            <xs:attribute name="driver" type="xs:string"/>
+            <!--驱动的名字-->
+            <xs:attribute name="driverClassName" type="xs:string" use="required"/>
+        </xs:complexType>
+        <!--设置别名唯一-->
+        <xs:unique name="aliasUnique">
+            <xs:selector xpath="dataSource"/>
+            <xs:field xpath="@alias"/>
+        </xs:unique>
+        <xs:unique name="defaultUnique">
+            <xs:selector xpath="dataSource"/>
+            <xs:field xpath="@default"/>
+        </xs:unique>
+    </xs:element>
+    <xs:element name="mappers">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="unbounded" name="mapper"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
